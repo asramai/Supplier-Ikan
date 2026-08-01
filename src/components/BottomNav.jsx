@@ -10,6 +10,7 @@ function BottomNav() {
     { icon: 'assessment', label: 'Laporan', path: '/laporan', weight: undefined },
     { icon: 'groups', label: 'Mitra', path: '/mitra', weight: 'fill' },
     { icon: 'group', label: 'Users', path: '/users', weight: 'fill' },
+    { icon: 'inventory_2', label: 'Inventory', path: '/inventory', weight: 'fill' },
   ]
 
   return (

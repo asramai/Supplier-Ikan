@@ -12,6 +12,7 @@ import LaporanLabaRugi from './components/LaporanLabaRugi'
 import Login from './components/Login'
 import MitraManagement from './components/MitraManagement'
 import UserManagement from './components/UserManagement'
+import FishData from './components/FishData'
 
 const PAGES_WITHOUT_NAV = ['/login']
 
@@ -39,6 +40,7 @@ function App() {
         <Route path="/laporan" element={<LaporanLabaRugi />} />
         <Route path="/mitra" element={<MitraManagement />} />
         <Route path="/users" element={<UserManagement />} />
+        <Route path="/inventory" element={<FishData />} />
         <Route path="/login" element={<Login />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
