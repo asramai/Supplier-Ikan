@@ -8,6 +8,7 @@ import PurchasesTable from './components/PurchasesTable'
 import StatusChips from './components/StatusChips'
 import FAB from './components/FAB'
 import PurchaseForm from './components/PurchaseForm'
+import LaporanLabaRugi from './components/LaporanLabaRugi'
 
 function Dashboard() {
   return (
@@ -27,6 +28,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/beli" element={<PurchaseForm />} />
+        <Route path="/laporan" element={<LaporanLabaRugi />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <FAB />
