@@ -9,6 +9,7 @@ function BottomNav() {
     { icon: 'payments', label: 'Jual', path: '/jual', weight: undefined },
     { icon: 'assessment', label: 'Laporan', path: '/laporan', weight: undefined },
     { icon: 'groups', label: 'Mitra', path: '/mitra', weight: 'fill' },
+    { icon: 'group', label: 'Users', path: '/users', weight: 'fill' },
   ]
 
   return (
