@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Daftar Jenis Ikan - Asy-Syifa Panua</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-fixed": "#00210a",
+                    "on-primary-fixed-variant": "#005322",
+                    "on-secondary-fixed-variant": "#005224",
+                    "secondary": "#006d32",
+                    "outline": "#6d7b6c",
+                    "inverse-primary": "#52e079",
+                    "inverse-on-surface": "#f3f0f0",
+                    "surface-container-high": "#eae8e7",
+                    "surface": "#fbf9f8",
+                    "on-tertiary-fixed": "#002106",
+                    "surface-container-highest": "#e4e2e1",
+                    "primary-fixed-dim": "#52e079",
+                    "primary-fixed": "#71fe93",
+                    "on-surface-variant": "#3d4a3d",
+                    "tertiary-container": "#31ae4b",
+                    "surface-container": "#f0eded",
+                    "secondary-container": "#92f9a7",
+                    "tertiary-fixed-dim": "#66df75",
+                    "error": "#ba1a1a",
+                    "on-secondary-container": "#007435",
+                    "tertiary": "#006e25",
+                    "surface-dim": "#dcd9d9",
+                    "outline-variant": "#bccbb9",
+                    "on-surface": "#1b1c1c",
+                    "on-primary-fixed": "#002109",
+                    "on-secondary": "#ffffff",
+                    "background": "#fbf9f8",
+                    "on-background": "#1b1c1c",
+                    "on-primary-container": "#003a15",
+                    "inverse-surface": "#303030",
+                    "error-container": "#ffdad6",
+                    "primary": "#006e2f",
+                    "on-tertiary-fixed-variant": "#00531a",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed": "#83fc8e",
+                    "surface-container-low": "#f6f3f2",
+                    "on-error": "#ffffff",
+                    "surface-tint": "#006e2f",
+                    "secondary-fixed": "#92f9a7",
+                    "primary-container": "#00b050",
+                    "surface-bright": "#fbf9f8",
+                    "on-error-container": "#93000a",
+                    "secondary-fixed-dim": "#76dc8d",
+                    "on-tertiary": "#ffffff",
+                    "surface-variant": "#e4e2e1",
+                    "on-tertiary-container": "#00390f"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "16px",
+                    "sm": "8px",
+                    "lg": "24px",
+                    "xl": "32px",
+                    "margin-mobile": "20px",
+                    "gutter": "16px",
+                    "base": "4px",
+                    "xs": "4px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Hanken Grotesk"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "display-financial": ["Hanken Grotesk"],
+                    "body-lg": ["Hanken Grotesk"],
+                    "label-md": ["Hanken Grotesk"],
+                    "financial-table": ["Hanken Grotesk"],
+                    "body-md": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "display-financial": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "financial-table": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Hanken Grotesk', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+        }
+        .zebra-table tr:nth-child(even) { background-color: #F9F9F9; }
+        .sticky-header { position: sticky; top: 0; z-index: 10; }
+        
+        /* Hide scrollbar */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- Top App Bar -->
+<header class="bg-surface-container-lowest w-full top-0 sticky z-40 border-b border-outline-variant flex justify-between items-center px-margin-mobile py-sm">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a fishery manager against a clean, minimal office background. The lighting is soft and corporate, maintaining a high-contrast utility feel with vibrant green accents in the environment. The aesthetic is clean, modern, and reliable, emphasizing the growth and professional nature of the Asy-Syifa Panua brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCzvPTbZhzc4zwVTihrAX4gcU4aYqWsXWrQqsYICOJ-L9PtJxSSVBkbev3LwcH1hqSaHRUxIZOFEaFMswH1ZmGj0t2Dx6ZGfmMqhAsBREq4Nv79mnolZ27-ujadgP0pOqJFNwkCYHFKVm1UkdpUF4X1OWlf3RA9BZZvf-MlAbSbEfUEIbmKJloSRUEURkSRo_htGjvs6M9yusEN3ZzqWadcyyDEceMtkE9i_Jxe-vWMP2Gclt5UA72Fw"/>
+</div>
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary">Asy-Syifa Panua</h1>
+</div>
+<button class="text-primary active:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</header>
+<main class="px-margin-mobile pt-lg">
+<!-- Page Title & Stats Header -->
+<div class="mb-lg">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-xs">Daftar Jenis Ikan</h2>
+<p class="font-body-md text-on-surface-variant">Kelola master data komoditas perikanan Anda.</p>
+</div>
+<!-- Search Bar -->
+<div class="relative mb-lg">
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="w-full pl-xl pr-md py-md bg-surface-container-lowest border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md transition-all" placeholder="Cari jenis ikan..." type="text"/>
+</div>
+<!-- Summary Cards (Bento-lite) -->
+<div class="grid grid-cols-2 gap-gutter mb-lg">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md">
+<p class="font-label-md text-on-surface-variant uppercase mb-xs">Total Jenis</p>
+<p class="font-display-financial text-display-financial text-primary">24</p>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md">
+<p class="font-label-md text-on-surface-variant uppercase mb-xs">Stok Kritis</p>
+<p class="font-display-financial text-display-financial text-error">3</p>
+</div>
+</div>
+<!-- Fish Master List (Custom Zebra Table Layout) -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left zebra-table border-collapse">
+<thead class="bg-surface-container-low border-b-2 border-primary">
+<tr>
+<th class="px-md py-sm font-financial-table text-secondary whitespace-nowrap">Jenis Ikan</th>
+<th class="px-md py-sm font-financial-table text-secondary text-center">Grade</th>
+<th class="px-md py-sm font-financial-table text-secondary text-right">Harga/Kg</th>
+<th class="px-md py-sm font-financial-table text-secondary text-right">Stok</th>
+</tr>
+</thead>
+<tbody class="font-body-md">
+<!-- Item 1 -->
+<tr class="active:bg-surface-container-high transition-colors">
+<td class="px-md py-md">
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">Kerapu Sunu</span>
+<span class="text-xs text-on-surface-variant">ID: FR-001</span>
+</div>
+</td>
+<td class="px-md py-md text-center">
+<span class="px-sm py-xs bg-tertiary-container/10 text-tertiary font-bold rounded-lg text-xs">A</span>
+</td>
+<td class="px-md py-md text-right font-financial-table">Rp 125.000</td>
+<td class="px-md py-md text-right">
+<span class="font-bold">450</span> <span class="text-xs text-on-surface-variant">Kg</span>
+</td>
+</tr>
+<!-- Item 2 -->
+<tr class="active:bg-surface-container-high transition-colors">
+<td class="px-md py-md">
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">Tongkol Abu-abu</span>
+<span class="text-xs text-on-surface-variant">ID: FR-002</span>
+</div>
+</td>
+<td class="px-md py-md text-center">
+<span class="px-sm py-xs bg-outline-variant/30 text-on-surface-variant font-bold rounded-lg text-xs">B</span>
+</td>
+<td class="px-md py-md text-right font-financial-table">Rp 32.500</td>
+<td class="px-md py-md text-right">
+<span class="font-bold">1.200</span> <span class="text-xs text-on-surface-variant">Kg</span>
+</td>
+</tr>
+<!-- Item 3 -->
+<tr class="active:bg-surface-container-high transition-colors">
+<td class="px-md py-md">
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">Tuna Yellowfin</span>
+<span class="text-xs text-on-surface-variant">ID: FR-003</span>
+</div>
+</td>
+<td class="px-md py-md text-center">
+<span class="px-sm py-xs bg-tertiary-container/10 text-tertiary font-bold rounded-lg text-xs">A</span>
+</td>
+<td class="px-md py-md text-right font-financial-table">Rp 85.000</td>
+<td class="px-md py-md text-right">
+<span class="font-bold text-error">12</span> <span class="text-xs text-on-surface-variant">Kg</span>
+</td>
+</tr>
+<!-- Item 4 -->
+<tr class="active:bg-surface-container-high transition-colors">
+<td class="px-md py-md">
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">Kakap Merah</span>
+<span class="text-xs text-on-surface-variant">ID: FR-004</span>
+</div>
+</td>
+<td class="px-md py-md text-center">
+<span class="px-sm py-xs bg-error-container/20 text-error font-bold rounded-lg text-xs">C</span>
+</td>
+<td class="px-md py-md text-right font-financial-table">Rp 55.000</td>
+<td class="px-md py-md text-right">
+<span class="font-bold">340</span> <span class="text-xs text-on-surface-variant">Kg</span>
+</td>
+</tr>
+<!-- Item 5 -->
+<tr class="active:bg-surface-container-high transition-colors">
+<td class="px-md py-md">
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">Cakalang</span>
+<span class="text-xs text-on-surface-variant">ID: FR-005</span>
+</div>
+</td>
+<td class="px-md py-md text-center">
+<span class="px-sm py-xs bg-outline-variant/30 text-on-surface-variant font-bold rounded-lg text-xs">B</span>
+</td>
+<td class="px-md py-md text-right font-financial-table">Rp 28.000</td>
+<td class="px-md py-md text-right">
+<span class="font-bold">2.150</span> <span class="text-xs text-on-surface-variant">Kg</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Filter Chips Section -->
+<div class="mt-lg">
+<p class="font-label-md text-on-surface-variant uppercase mb-sm">Filter Cepat</p>
+<div class="flex gap-sm overflow-x-auto no-scrollbar pb-sm">
+<button class="bg-primary text-on-primary px-md py-sm rounded-full font-label-md whitespace-nowrap">Semua</button>
+<button class="bg-surface-container-high text-on-surface-variant px-md py-sm rounded-full font-label-md whitespace-nowrap">Grade A</button>
+<button class="bg-surface-container-high text-on-surface-variant px-md py-sm rounded-full font-label-md whitespace-nowrap">Stok Melimpah</button>
+<button class="bg-surface-container-high text-on-surface-variant px-md py-sm rounded-full font-label-md whitespace-nowrap">Harga Tertinggi</button>
+</div>
+</div>
+</main>
+<!-- Floating Action Button (FAB) -->
+<button class="fixed bottom-24 right-md w-14 h-14 bg-primary-container text-on-primary-container rounded-xl shadow-lg flex items-center justify-center active:scale-95 transition-transform z-50">
+<span class="material-symbols-outlined text-[32px]" data-icon="add">add</span>
+</button>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-sm py-xs bg-surface-container-lowest border-t border-outline-variant">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-md py-xs hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-md py-xs hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-label-md text-label-md">Transactions</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-md py-xs hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-label-md text-label-md">Mitra</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-xl px-md py-xs active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-label-md text-label-md">Inventory</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-md py-xs hover:bg-surface-container-high transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label-md text-label-md">Finance</span>
+</a>
+</nav>
+<script>
+        // Simple search interaction
+        const searchInput = document.querySelector('input[type="text"]');
+        const rows = document.querySelectorAll('tbody tr');
+
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            rows.forEach(row => {
+                const fishName = row.querySelector('.font-bold').textContent.toLowerCase();
+                if (fishName.includes(term)) {
+                    row.style.display = 'table-row';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // FAB Ripple effect or interaction
+        const fab = document.querySelector('button.fixed.bottom-24');
+        fab.addEventListener('click', () => {
+            console.log("Opening Add New Fish form...");
+            // Add Modal Trigger logic here if needed
+        });
+    </script>
+</body></html>

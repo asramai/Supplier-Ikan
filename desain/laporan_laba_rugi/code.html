@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Laporan Laba Rugi - Asy-Syifa Panua</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#002109",
+                        "tertiary-fixed-dim": "#66df75",
+                        "primary-fixed-dim": "#52e079",
+                        "on-tertiary-container": "#00390f",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#00531a",
+                        "surface-container-low": "#f6f3f2",
+                        "on-secondary-fixed-variant": "#005224",
+                        "on-surface-variant": "#3d4a3d",
+                        "on-tertiary-fixed": "#002106",
+                        "secondary-fixed": "#92f9a7",
+                        "surface-dim": "#dcd9d9",
+                        "surface-tint": "#006e2f",
+                        "on-primary-fixed-variant": "#005322",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#bccbb9",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#52e079",
+                        "tertiary-container": "#31ae4b",
+                        "inverse-on-surface": "#f3f0f0",
+                        "on-secondary-fixed": "#00210a",
+                        "surface-container-high": "#eae8e7",
+                        "surface-variant": "#e4e2e1",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#83fc8e",
+                        "surface-container-highest": "#e4e2e1",
+                        "tertiary": "#006e25",
+                        "surface-container": "#f0eded",
+                        "secondary-fixed-dim": "#76dc8d",
+                        "on-background": "#1b1c1c",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#006d32",
+                        "on-surface": "#1b1c1c",
+                        "background": "#fbf9f8",
+                        "secondary-container": "#92f9a7",
+                        "on-error": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "inverse-surface": "#303030",
+                        "on-secondary-container": "#007435",
+                        "outline": "#6d7b6c",
+                        "surface-bright": "#fbf9f8",
+                        "surface": "#fbf9f8",
+                        "primary": "#006e2f",
+                        "on-primary-container": "#003a15",
+                        "primary-fixed": "#71fe93",
+                        "primary-container": "#00b050"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "xs": "4px",
+                        "gutter": "16px",
+                        "md": "16px",
+                        "base": "4px",
+                        "margin-mobile": "20px",
+                        "lg": "24px",
+                        "xl": "32px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Hanken Grotesk"],
+                        "financial-table": ["Hanken Grotesk"],
+                        "display-financial": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "financial-table": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "display-financial": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Hanken Grotesk', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .zebra-row:nth-child(even) { background-color: #F9F9F9; }
+        .bar-transition { transition: height 1s ease-out; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- Top App Bar -->
+<header class="docked full-width top-0 z-40 bg-surface border-b border-outline-variant flex justify-between items-center w-full px-margin-mobile py-sm">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" data-icon="waves">waves</span>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Asy-Syifa Panua</h1>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a financial manager in a clean corporate office setting. The lighting is bright and natural, consistent with a modern light-mode UI. The background is a soft-focus office interior with minimalist green accents, reflecting a trustworthy and professional fishery management atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHFVeOtKUXRXzgB9DNj3Exaz9AN8Mmw5va3LoILZ7ebByBKpfbJEJCt4Jc96VygosH_cJH5CDu0UnfCrClt5REq5aiLJukflgCJHic6cawed2_HxDXTSrypo2r9X1JI9mN2EKe5hhZRQcIJSbkqRPtLJX7ob0d1vVtWBfyqzybaes0BqQ8-pnSYqBtiOaRKWE4kVfEkJjOFvGtxcJpwStoDqrboEyxeMzmqOZLS7uX7ZbD0goQyhx0rw"/>
+</div>
+</header>
+<main class="max-w-md mx-auto px-margin-mobile mt-lg">
+<!-- Report Header & Date Filter -->
+<section class="mb-lg">
+<div class="flex justify-between items-end mb-md">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Laporan Laba Rugi</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Periode Operasional Fishery</p>
+</div>
+<button class="flex items-center gap-xs px-sm py-xs bg-surface-container rounded-lg border border-outline-variant text-on-surface hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="calendar_today">calendar_today</span>
+<span class="font-label-md text-label-md">Agustus 2023</span>
+</button>
+</div>
+</section>
+<!-- Financial Summary Bento-style Cards -->
+<section class="grid grid-cols-2 gap-md mb-xl">
+<!-- Revenue -->
+<div class="col-span-1 bg-surface border border-outline-variant rounded-xl p-md">
+<div class="flex items-center gap-xs mb-xs">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="trending_up">trending_up</span>
+<span class="font-label-md text-label-md text-on-surface-variant">PENDAPATAN</span>
+</div>
+<div class="font-headline-md text-headline-md text-primary">Rp 45.2M</div>
+</div>
+<!-- Expenses -->
+<div class="col-span-1 bg-surface border border-outline-variant rounded-xl p-md">
+<div class="flex items-center gap-xs mb-xs">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]" data-icon="trending_down">trending_down</span>
+<span class="font-label-md text-label-md text-on-surface-variant">PENGELUARAN</span>
+</div>
+<div class="font-headline-md text-headline-md text-on-surface-variant">Rp 12.8M</div>
+</div>
+<!-- Net Profit (Hero Card) -->
+<div class="col-span-2 bg-[#E8F5E9] border border-primary-container rounded-xl p-lg relative overflow-hidden">
+<div class="flex flex-col relative z-10">
+<span class="font-label-md text-label-md text-primary mb-xs">TOTAL LABA BERSIH (NET)</span>
+<div class="font-display-financial text-display-financial text-primary">Rp 32.400.000</div>
+<div class="flex items-center gap-xs mt-sm text-primary font-label-md">
+<span class="material-symbols-outlined text-[16px]" data-icon="stars" style="font-variation-settings: 'FILL' 1;">stars</span>
+<span>Meningkat 12% dari bulan lalu</span>
+</div>
+</div>
+<!-- Abstract visual element -->
+<div class="absolute right-[-20px] bottom-[-20px] opacity-10">
+<span class="material-symbols-outlined text-[120px] text-primary" data-icon="payments">payments</span>
+</div>
+</div>
+</section>
+<!-- Visual Chart Section -->
+<section class="bg-surface border border-outline-variant rounded-xl p-md mb-xl">
+<h3 class="font-label-md text-label-md text-on-surface-variant mb-lg uppercase tracking-wider">Perbandingan Penjualan vs Beban</h3>
+<div class="flex items-end justify-between h-48 gap-lg px-md">
+<!-- Group 1 -->
+<div class="flex-1 flex flex-col items-center gap-sm h-full justify-end">
+<div class="w-full flex gap-1 items-end h-full">
+<div class="w-1/2 bg-primary-container rounded-t-sm bar-transition" style="height: 85%;"></div>
+<div class="w-1/2 bg-secondary rounded-t-sm bar-transition" style="height: 35%;"></div>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant">Minggu 1</span>
+</div>
+<!-- Group 2 -->
+<div class="flex-1 flex flex-col items-center gap-sm h-full justify-end">
+<div class="w-full flex gap-1 items-end h-full">
+<div class="w-1/2 bg-primary-container rounded-t-sm bar-transition" style="height: 95%;"></div>
+<div class="w-1/2 bg-secondary rounded-t-sm bar-transition" style="height: 40%;"></div>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant">Minggu 2</span>
+</div>
+<!-- Group 3 -->
+<div class="flex-1 flex flex-col items-center gap-sm h-full justify-end">
+<div class="w-full flex gap-1 items-end h-full">
+<div class="w-1/2 bg-primary-container rounded-t-sm bar-transition" style="height: 70%;"></div>
+<div class="w-1/2 bg-secondary rounded-t-sm bar-transition" style="height: 30%;"></div>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant">Minggu 3</span>
+</div>
+<!-- Group 4 -->
+<div class="flex-1 flex flex-col items-center gap-sm h-full justify-end">
+<div class="w-full flex gap-1 items-end h-full">
+<div class="w-1/2 bg-primary-container rounded-t-sm bar-transition" style="height: 90%;"></div>
+<div class="w-1/2 bg-secondary rounded-t-sm bar-transition" style="height: 45%;"></div>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant">Minggu 4</span>
+</div>
+</div>
+<div class="mt-lg flex justify-center gap-xl border-t border-outline-variant pt-md">
+<div class="flex items-center gap-xs">
+<div class="w-3 h-3 bg-primary-container rounded-full"></div>
+<span class="font-label-md text-label-md text-on-surface-variant">Penjualan</span>
+</div>
+<div class="flex items-center gap-xs">
+<div class="w-3 h-3 bg-secondary rounded-full"></div>
+<span class="font-label-md text-label-md text-on-surface-variant">Biaya Operasional</span>
+</div>
+</div>
+</section>
+<!-- Detailed Breakdown (Zebra Table Pattern) -->
+<section class="mb-lg">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-md">Rincian Pengeluaran (OpEx)</h3>
+<div class="bg-surface border border-outline-variant rounded-xl overflow-hidden">
+<div class="grid grid-cols-12 bg-secondary p-md border-b-2 border-primary">
+<div class="col-span-6 font-financial-table text-financial-table text-white">Kategori</div>
+<div class="col-span-6 text-right font-financial-table text-financial-table text-white">Nilai</div>
+</div>
+<div class="divide-y divide-outline-variant">
+<div class="grid grid-cols-12 p-md zebra-row items-center">
+<div class="col-span-6 flex flex-col">
+<span class="font-body-lg text-body-lg text-on-surface">Bahan Bakar (BBM)</span>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase">Solar Industri</span>
+</div>
+<div class="col-span-6 text-right font-headline-md text-headline-md text-on-surface">Rp 5.200k</div>
+</div>
+<div class="grid grid-cols-12 p-md zebra-row items-center">
+<div class="col-span-6 flex flex-col">
+<span class="font-body-lg text-body-lg text-on-surface">Es &amp; Logistik</span>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase">Pendingin Kapal</span>
+</div>
+<div class="col-span-6 text-right font-headline-md text-headline-md text-on-surface">Rp 1.450k</div>
+</div>
+<div class="grid grid-cols-12 p-md zebra-row items-center">
+<div class="col-span-6 flex flex-col">
+<span class="font-body-lg text-body-lg text-on-surface">Gaji &amp; Upah</span>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase">ABK &amp; Operasional</span>
+</div>
+<div class="col-span-6 text-right font-headline-md text-headline-md text-on-surface">Rp 4.800k</div>
+</div>
+<div class="grid grid-cols-12 p-md zebra-row items-center">
+<div class="col-span-6 flex flex-col">
+<span class="font-body-lg text-body-lg text-on-surface">Lain-lain</span>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase">Administrasi</span>
+</div>
+<div class="col-span-6 text-right font-headline-md text-headline-md text-on-surface">Rp 1.350k</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Status Chip Example for Transaction History -->
+<section class="mt-xl">
+<div class="flex justify-between items-center mb-md">
+<h3 class="font-headline-md text-headline-md text-on-surface">Status Transaksi Terakhir</h3>
+<span class="text-primary font-label-md text-label-md cursor-pointer hover:underline">Lihat Semua</span>
+</div>
+<div class="space-y-sm">
+<div class="flex justify-between items-center p-md bg-surface border border-outline-variant rounded-lg">
+<div class="flex items-center gap-md">
+<div class="bg-primary-container text-on-primary-container p-sm rounded-lg">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+</div>
+<div>
+<p class="font-body-lg text-body-lg">Kapal Bahari 01</p>
+<p class="font-label-md text-label-md text-on-surface-variant">12 Aug, 2023</p>
+</div>
+</div>
+<div class="px-sm py-xs bg-[#E8F5E9] text-[#28A745] font-label-md text-label-md rounded-full uppercase">LUNAS</div>
+</div>
+<div class="flex justify-between items-center p-md bg-surface border border-outline-variant rounded-lg">
+<div class="flex items-center gap-md">
+<div class="bg-surface-container-high text-on-surface-variant p-sm rounded-lg">
+<span class="material-symbols-outlined" data-icon="shipping">cloud_download</span>
+</div>
+<div>
+<p class="font-body-lg text-body-lg">Logistik Es</p>
+<p class="font-label-md text-label-md text-on-surface-variant">11 Aug, 2023</p>
+</div>
+</div>
+<div class="px-sm py-xs bg-[#FDEDEC] text-[#DC3545] font-label-md text-label-md rounded-full uppercase">HUTANG</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center bg-surface dark:bg-surface-dim px-xs py-sm border-t border-outline-variant">
+<!-- Home -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-3 py-1 hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Home</span>
+</a>
+<!-- Data -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-3 py-1 hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+<span class="font-label-md text-label-md">Data</span>
+</a>
+<!-- Beli -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-3 py-1 hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+<span class="font-label-md text-label-md">Beli</span>
+</a>
+<!-- Jual -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant px-3 py-1 hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label-md text-label-md">Jual</span>
+</a>
+<!-- Laporan (ACTIVE) -->
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-xl px-3 py-1 scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="assessment" style="font-variation-settings: 'FILL' 1;">assessment</span>
+<span class="font-label-md text-label-md">Laporan</span>
+</a>
+</nav>
+<script>
+        // Micro-interaction for bar chart animation on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const bars = document.querySelectorAll('.bar-transition');
+            bars.forEach(bar => {
+                const finalHeight = bar.style.height;
+                bar.style.height = '0%';
+                setTimeout(() => {
+                    bar.style.height = finalHeight;
+                }, 100);
+            });
+        });
+    </script>
+</body></html>

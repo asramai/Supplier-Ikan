@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Asy-Syifa Panua | Operational Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed": "#002109",
+                    "tertiary-fixed-dim": "#66df75",
+                    "primary-fixed-dim": "#52e079",
+                    "on-tertiary-container": "#00390f",
+                    "error": "#ba1a1a",
+                    "on-tertiary-fixed-variant": "#00531a",
+                    "surface-container-low": "#f6f3f2",
+                    "on-secondary-fixed-variant": "#005224",
+                    "on-surface-variant": "#3d4a3d",
+                    "on-tertiary-fixed": "#002106",
+                    "secondary-fixed": "#92f9a7",
+                    "surface-dim": "#dcd9d9",
+                    "surface-tint": "#006e2f",
+                    "on-primary-fixed-variant": "#005322",
+                    "on-secondary": "#ffffff",
+                    "outline-variant": "#bccbb9",
+                    "on-primary": "#ffffff",
+                    "inverse-primary": "#52e079",
+                    "tertiary-container": "#31ae4b",
+                    "inverse-on-surface": "#f3f0f0",
+                    "on-secondary-fixed": "#00210a",
+                    "surface-container-high": "#eae8e7",
+                    "surface-variant": "#e4e2e1",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-fixed": "#83fc8e",
+                    "surface-container-highest": "#e4e2e1",
+                    "tertiary": "#006e25",
+                    "surface-container": "#f0eded",
+                    "secondary-fixed-dim": "#76dc8d",
+                    "on-background": "#1b1c1c",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary": "#006d32",
+                    "on-surface": "#1b1c1c",
+                    "background": "#fbf9f8",
+                    "secondary-container": "#92f9a7",
+                    "on-error": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "inverse-surface": "#303030",
+                    "on-secondary-container": "#007435",
+                    "outline": "#6d7b6c",
+                    "surface-bright": "#fbf9f8",
+                    "surface": "#fbf9f8",
+                    "primary": "#006e2f",
+                    "on-primary-container": "#003a15",
+                    "primary-fixed": "#71fe93",
+                    "primary-container": "#00b050"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sm": "8px",
+                    "xs": "4px",
+                    "gutter": "16px",
+                    "md": "16px",
+                    "base": "4px",
+                    "margin-mobile": "20px",
+                    "lg": "24px",
+                    "xl": "32px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Hanken Grotesk"],
+                    "financial-table": ["Hanken Grotesk"],
+                    "display-financial": ["Hanken Grotesk"],
+                    "body-md": ["Hanken Grotesk"],
+                    "label-md": ["Hanken Grotesk"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "body-lg": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "financial-table": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "display-financial": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Hanken Grotesk', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .zebra-row:nth-child(even) {
+            background-color: #F9F9F9;
+        }
+        .active-scale:active {
+            transform: scale(0.95);
+        }
+        .scroll-hide::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="bg-surface sticky top-0 z-50 w-full border-b border-outline-variant flex justify-between items-center px-margin-mobile py-sm h-16">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-headline-md" data-icon="waves">waves</span>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Asy-Syifa Panua</h1>
+</div>
+<div class="flex items-center gap-3">
+<button class="material-symbols-outlined text-on-surface-variant p-1 rounded-full hover:bg-surface-container" data-icon="notifications">notifications</button>
+<div class="w-10 h-10 rounded-full border border-outline-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a corporate financial officer, smiling warmly. The image has a clean, high-key white background with soft studio lighting. The person is wearing a professional minimalist outfit. The overall style is modern and corporate, consistent with the vibrant green and white aesthetic of the Asy-Syifa Panua brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-DdPzUcdGpxbnjR_NaOU2DPcK_mFNZs_RR9900pnv0ZiYHEk11U3ATeVnx89ObW5XL2fsdSIrJmEuB4YqF7XYrVVKqePIgbFyMtyqqkWQeJgBIpcNJA1C-KxPfQmlyoyhFSbUZDwBK1GpgWF7nKHAAhK6bho0UKP1e0FarccMKb3psfOs9iNyHoN0iScmFlBHuIuQ4gKpFbSSsIvnvjx9pb_6jwkFPON7wP-e_NvS0sfEm0X8n_vfAQ"/>
+</div>
+</div>
+</header>
+<main class="px-margin-mobile pt-lg flex flex-col gap-lg">
+<!-- Net Profit Focus Section -->
+<section class="bg-white border border-outline-variant rounded-xl p-md flex flex-col gap-xs">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Net Profit</span>
+<div class="flex items-end justify-between">
+<span class="font-display-financial text-display-financial text-primary">Rp 60.000.000</span>
+<div class="flex items-center text-primary bg-secondary-container px-2 py-1 rounded-full gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="trending_up">trending_up</span>
+<span class="font-label-md text-label-md">12%</span>
+</div>
+</div>
+</section>
+<!-- Secondary Stat Cards Grid -->
+<section class="grid grid-cols-2 gap-md">
+<!-- Total Sales -->
+<div class="bg-white border border-outline-variant rounded-xl p-md flex flex-col gap-sm">
+<div class="flex items-center justify-between">
+<span class="material-symbols-outlined text-primary bg-primary-container/20 p-2 rounded-lg" data-icon="payments">payments</span>
+</div>
+<div>
+<span class="font-label-md text-label-md text-on-surface-variant">Total Sales</span>
+<p class="font-headline-md text-headline-md text-on-surface">Rp 150M</p>
+</div>
+</div>
+<!-- Total Purchases -->
+<div class="bg-white border border-outline-variant rounded-xl p-md flex flex-col gap-sm">
+<div class="flex items-center justify-between">
+<span class="material-symbols-outlined text-on-surface-variant bg-surface-container-high p-2 rounded-lg" data-icon="shopping_bag">shopping_bag</span>
+</div>
+<div>
+<span class="font-label-md text-label-md text-on-surface-variant">Total Purchases</span>
+<p class="font-headline-md text-headline-md text-on-surface">Rp 90M</p>
+</div>
+</div>
+</section>
+<!-- Quick Actions / Quick Summary -->
+<section class="flex flex-col gap-md">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-md text-headline-md text-on-surface">Recent Purchases</h2>
+<button class="text-primary font-label-md text-label-md hover:underline">View All</button>
+</div>
+<!-- Zebra-Striped Table Container -->
+<div class="bg-white border border-outline-variant rounded-xl overflow-hidden">
+<div class="overflow-x-auto scroll-hide">
+<table class="w-full text-left border-collapse">
+<thead class="bg-primary border-b-2 border-primary-container">
+<tr>
+<th class="px-md py-3 font-financial-table text-white whitespace-nowrap">Fisherman</th>
+<th class="px-md py-3 font-financial-table text-white whitespace-nowrap">Fish Type</th>
+<th class="px-md py-3 font-financial-table text-white whitespace-nowrap">Weight</th>
+<th class="px-md py-3 font-financial-table text-white whitespace-nowrap">Total</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30">
+<tr class="zebra-row">
+<td class="px-md py-4">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-bold text-on-surface">Budi Santoso</span>
+<span class="font-label-md text-label-md text-on-surface-variant">24 Oct, 08:30</span>
+</div>
+</td>
+<td class="px-md py-4 font-body-md text-body-md">Yellowfin Tuna</td>
+<td class="px-md py-4 font-body-md text-body-md">45.5 kg</td>
+<td class="px-md py-4 font-body-md text-body-md font-bold text-primary">Rp 4.5M</td>
+</tr>
+<tr class="zebra-row">
+<td class="px-md py-4">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-bold text-on-surface">Andi Wijaya</span>
+<span class="font-label-md text-label-md text-on-surface-variant">24 Oct, 09:15</span>
+</div>
+</td>
+<td class="px-md py-4 font-body-md text-body-md">Skipjack</td>
+<td class="px-md py-4 font-body-md text-body-md">120.0 kg</td>
+<td class="px-md py-4 font-body-md text-body-md font-bold text-primary">Rp 8.2M</td>
+</tr>
+<tr class="zebra-row">
+<td class="px-md py-4">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-bold text-on-surface">Surya Pratama</span>
+<span class="font-label-md text-label-md text-on-surface-variant">23 Oct, 16:45</span>
+</div>
+</td>
+<td class="px-md py-4 font-body-md text-body-md">Mackerel</td>
+<td class="px-md py-4 font-body-md text-body-md">28.2 kg</td>
+<td class="px-md py-4 font-body-md text-body-md font-bold text-primary">Rp 1.8M</td>
+</tr>
+<tr class="zebra-row">
+<td class="px-md py-4">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-bold text-on-surface">Herman Ali</span>
+<span class="font-label-md text-label-md text-on-surface-variant">23 Oct, 14:20</span>
+</div>
+</td>
+<td class="px-md py-4 font-body-md text-body-md">Grouper</td>
+<td class="px-md py-4 font-body-md text-body-md">15.5 kg</td>
+<td class="px-md py-4 font-body-md text-body-md font-bold text-primary">Rp 3.1M</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- Status Overview Chip Row -->
+<section class="flex flex-col gap-sm">
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase">Batch Status</h3>
+<div class="flex gap-sm overflow-x-auto scroll-hide pb-2">
+<div class="bg-[#E8F5E9] text-[#28A745] px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-[#28A745]"></span>
+<span class="font-label-md text-label-md">Processing (12)</span>
+</div>
+<div class="bg-[#F0F0F0] text-[#6C757D] px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-[#6C757D]"></span>
+<span class="font-label-md text-label-md">Ready (5)</span>
+</div>
+<div class="bg-[#FDEDEC] text-[#DC3545] px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-[#DC3545]"></span>
+<span class="font-label-md text-label-md">Pending Payment (2)</span>
+</div>
+</div>
+</section>
+</main>
+<!-- FAB for quick action -->
+<button class="fixed bottom-24 right-margin-mobile w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center active-scale transition-all z-40">
+<span class="material-symbols-outlined text-[28px]" data-icon="add">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center bg-surface border-t border-outline-variant px-xs py-sm">
+<!-- Home (Active) -->
+<a class="flex flex-col items-center justify-center bg-secondary-container rounded-xl px-3 py-1 text-on-secondary-container transition-all scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard" data-weight="fill">dashboard</span>
+<span class="font-label-md text-label-md">Home</span>
+</a>
+<!-- Data -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+<span class="font-label-md text-label-md">Data</span>
+</a>
+<!-- Beli -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+<span class="font-label-md text-label-md">Beli</span>
+</a>
+<!-- Jual -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label-md text-label-md">Jual</span>
+</a>
+<!-- Laporan -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span class="font-label-md text-label-md">Laporan</span>
+</a>
+</nav>
+<script>
+        // Micro-interactions and data formatting logic
+        document.querySelectorAll('a, button').forEach(el => {
+            el.addEventListener('click', (e) => {
+                // Simple ripple effect or feedback logic could go here
+                console.log('Action performed:', el.innerText || 'Icon Button');
+            });
+        });
+
+        // Sticky header behavior
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            const header = document.querySelector('header');
+            if (currentScroll > lastScroll && currentScroll > 100) {
+                header.style.transform = 'translateY(-100%)';
+                header.style.transition = 'transform 0.3s ease-in-out';
+            } else {
+                header.style.transform = 'translateY(0)';
+            }
+            lastScroll = currentScroll;
+        });
+    </script>
+</body></html>

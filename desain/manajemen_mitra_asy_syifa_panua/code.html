@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mitra Management - Asy-Syifa Panua</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#00210a",
+                        "on-primary-fixed-variant": "#005322",
+                        "on-secondary-fixed-variant": "#005224",
+                        "secondary": "#006d32",
+                        "outline": "#6d7b6c",
+                        "inverse-primary": "#52e079",
+                        "inverse-on-surface": "#f3f0f0",
+                        "surface-container-high": "#eae8e7",
+                        "surface": "#fbf9f8",
+                        "on-tertiary-fixed": "#002106",
+                        "surface-container-highest": "#e4e2e1",
+                        "primary-fixed-dim": "#52e079",
+                        "primary-fixed": "#71fe93",
+                        "on-surface-variant": "#3d4a3d",
+                        "tertiary-container": "#31ae4b",
+                        "surface-container": "#f0eded",
+                        "secondary-container": "#92f9a7",
+                        "tertiary-fixed-dim": "#66df75",
+                        "error": "#ba1a1a",
+                        "on-secondary-container": "#007435",
+                        "tertiary": "#006e25",
+                        "surface-dim": "#dcd9d9",
+                        "outline-variant": "#bccbb9",
+                        "on-surface": "#1b1c1c",
+                        "on-primary-fixed": "#002109",
+                        "on-secondary": "#ffffff",
+                        "background": "#fbf9f8",
+                        "on-background": "#1b1c1c",
+                        "on-primary-container": "#003a15",
+                        "inverse-surface": "#303030",
+                        "error-container": "#ffdad6",
+                        "primary": "#006e2f",
+                        "on-tertiary-fixed-variant": "#00531a",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#83fc8e",
+                        "surface-container-low": "#f6f3f2",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#006e2f",
+                        "secondary-fixed": "#92f9a7",
+                        "primary-container": "#00b050",
+                        "surface-bright": "#fbf9f8",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#76dc8d",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#e4e2e1",
+                        "on-tertiary-container": "#00390f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "sm": "8px",
+                        "lg": "24px",
+                        "xl": "32px",
+                        "margin-mobile": "20px",
+                        "gutter": "16px",
+                        "base": "4px",
+                        "xs": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "display-financial": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "financial-table": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "display-financial": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "financial-table": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Hanken Grotesk', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- Top App Bar (Shared Component) -->
+<header class="bg-surface-container-lowest dark:bg-surface-dim w-full top-0 sticky z-40 border-b border-outline-variant dark:border-outline flex justify-between items-center px-margin-mobile py-sm">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a fishery management administrator in a clean, modern office environment. The lighting is bright and natural, reflecting a trustworthy and corporate aesthetic. The image features a shallow depth of field with vibrant green accents in the background, matching the Asy-Syifa Panua brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBk5ljk14SNxis58pYf5rZ95Rgt65GnW-RcyIL97DZshZUf8NAXgOSpI_cPFLgyI0ys5nMw5s0l_kQ8VCCKVFNwiWgrGeBvykdLHk-e8VA2kXw3RFBftNuJyzjthzs0AkD_gelp54yvd-NvDfbDe4Vrr0khS1eNNJInVKCXfMCk9f6zy22AuBuGTy4lBMv0Ez4MG9-A9G21tIaqPDNG6Scb8gmIex602h9gA99m-sgkLzBW4D9J77fQ-g"/>
+</div>
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary dark:text-primary-fixed">Asy-Syifa Panua</h1>
+</div>
+<button class="material-symbols-outlined text-primary dark:text-primary-fixed p-xs hover:bg-surface-container dark:hover:bg-surface-container-highest transition-colors rounded-full">
+            notifications
+        </button>
+</header>
+<main class="px-margin-mobile pt-md">
+<!-- Dashboard Header & Tabs -->
+<div class="mb-lg">
+<div class="flex flex-col gap-sm">
+<h2 class="font-headline-md text-headline-md text-on-surface">Mitra Management</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Manage your network of fishermen and vendors.</p>
+</div>
+</div>
+<!-- Sticky Search and Tabs Container -->
+<div class="sticky top-[72px] bg-background pt-xs pb-md z-30 space-y-md">
+<!-- Search Bar -->
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full pl-[48px] pr-md py-md bg-surface-container-lowest border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary font-body-md transition-all outline-none" placeholder="Search by name or contact..." type="text"/>
+</div>
+<!-- Custom Tabs (Nelayan vs Vendor) -->
+<div class="flex p-1 bg-surface-container-low rounded-xl border border-outline-variant">
+<button class="flex-1 py-sm px-md rounded-lg font-label-md transition-all bg-primary-container text-on-primary-container shadow-sm" id="tab-nelayan" onclick="switchTab('nelayan')">
+                    Nelayan (Suppliers)
+                </button>
+<button class="flex-1 py-sm px-md rounded-lg font-label-md transition-all text-on-surface-variant hover:bg-surface-container-high" id="tab-vendor" onclick="switchTab('vendor')">
+                    Vendor (Buyers)
+                </button>
+</div>
+</div>
+<!-- Mitra Cards List -->
+<div class="space-y-md" id="mitra-list">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex flex-col gap-md">
+<div class="flex justify-between items-start">
+<div class="flex gap-md items-center">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[28px]">anchor</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Haji Sulaiman</h3>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">call</span>
+                                +62 812 3456 7890
+                            </p>
+</div>
+</div>
+<!-- Status Chip: Paid/Success -->
+<span class="px-sm py-xs bg-[#E8F5E9] text-[#28A745] rounded-lg font-label-md border border-[#28A745]/20">Active</span>
+</div>
+<div class="grid grid-cols-2 gap-sm border-t border-outline-variant pt-md">
+<button class="flex items-center justify-center gap-xs py-sm border border-primary text-primary rounded-lg font-label-md hover:bg-primary-container/10 transition-colors active:scale-95">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+                        Edit
+                    </button>
+<button class="flex items-center justify-center gap-xs py-sm bg-primary text-on-primary rounded-lg font-label-md hover:opacity-90 transition-opacity active:scale-95 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+                        Transactions
+                    </button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex flex-col gap-md">
+<div class="flex justify-between items-start">
+<div class="flex gap-md items-center">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[28px]">directions_boat</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">UD Maritim Jaya</h3>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">call</span>
+                                +62 811 9988 7766
+                            </p>
+</div>
+</div>
+<!-- Status Chip: Pending -->
+<span class="px-sm py-xs bg-[#F0F0F0] text-[#6C757D] rounded-lg font-label-md border border-[#6C757D]/20">Inactive</span>
+</div>
+<div class="grid grid-cols-2 gap-sm border-t border-outline-variant pt-md">
+<button class="flex items-center justify-center gap-xs py-sm border border-primary text-primary rounded-lg font-label-md hover:bg-primary-container/10 transition-colors active:scale-95">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+                        Edit
+                    </button>
+<button class="flex items-center justify-center gap-xs py-sm bg-primary text-on-primary rounded-lg font-label-md hover:opacity-90 transition-opacity active:scale-95 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+                        Transactions
+                    </button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex flex-col gap-md">
+<div class="flex justify-between items-start">
+<div class="flex gap-md items-center">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[28px]">account_balance_wallet</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Koperasi Nelayan Panua</h3>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">call</span>
+                                +62 813 1122 3344
+                            </p>
+</div>
+</div>
+<span class="px-sm py-xs bg-[#E8F5E9] text-[#28A745] rounded-lg font-label-md border border-[#28A745]/20">Active</span>
+</div>
+<div class="grid grid-cols-2 gap-sm border-t border-outline-variant pt-md">
+<button class="flex items-center justify-center gap-xs py-sm border border-primary text-primary rounded-lg font-label-md hover:bg-primary-container/10 transition-colors active:scale-95">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+                        Edit
+                    </button>
+<button class="flex items-center justify-center gap-xs py-sm bg-primary text-on-primary rounded-lg font-label-md hover:opacity-90 transition-opacity active:scale-95 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+                        Transactions
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB: Add Mitra -->
+<button class="fixed bottom-24 right-md w-14 h-14 bg-primary-container text-on-primary-container rounded-full shadow-lg flex items-center justify-center active:scale-90 transition-transform z-50">
+<span class="material-symbols-outlined text-[28px]">person_add</span>
+</button>
+<!-- Bottom Nav Bar (Shared Component) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-sm py-xs bg-surface-container-lowest dark:bg-surface-dim border-t border-outline-variant dark:border-outline rounded-t-lg">
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-md py-xs active:scale-95 transition-transform duration-150 cursor-pointer">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-md py-xs active:scale-95 transition-transform duration-150 cursor-pointer">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-md text-label-md">Transactions</span>
+</div>
+<!-- Active Tab: Mitra -->
+<div class="flex flex-col items-center justify-center bg-secondary-container dark:bg-on-secondary-container text-on-secondary-container dark:text-secondary-fixed rounded-xl px-md py-xs active:scale-95 transition-transform duration-150 cursor-pointer">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">groups</span>
+<span class="font-label-md text-label-md">Mitra</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-md py-xs active:scale-95 transition-transform duration-150 cursor-pointer">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-md text-label-md">Inventory</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-md py-xs active:scale-95 transition-transform duration-150 cursor-pointer">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-md text-label-md">Finance</span>
+</div>
+</nav>
+<script>
+        function switchTab(type) {
+            const tabs = {
+                nelayan: document.getElementById('tab-nelayan'),
+                vendor: document.getElementById('tab-vendor')
+            };
+            const listContainer = document.getElementById('mitra-list');
+
+            // Toggle Tab Styles
+            Object.keys(tabs).forEach(key => {
+                if(key === type) {
+                    tabs[key].classList.add('bg-primary-container', 'text-on-primary-container', 'shadow-sm');
+                    tabs[key].classList.remove('text-on-surface-variant', 'hover:bg-surface-container-high');
+                } else {
+                    tabs[key].classList.remove('bg-primary-container', 'text-on-primary-container', 'shadow-sm');
+                    tabs[key].classList.add('text-on-surface-variant', 'hover:bg-surface-container-high');
+                }
+            });
+
+            // Mock Data Switch Logic
+            if(type === 'vendor') {
+                listContainer.innerHTML = `
+                    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex flex-col gap-md opacity-0 translate-y-4 animate-in-fade">
+                        <div class="flex justify-between items-start">
+                            <div class="flex gap-md items-center">
+                                <div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+                                    <span class="material-symbols-outlined text-[28px]">storefront</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-headline-md text-headline-md text-on-surface">FreshFish Jakarta</h3>
+                                    <p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-xs">
+                                        <span class="material-symbols-outlined text-[16px]">call</span>
+                                        +62 21 788 9900
+                                    </p>
+                                </div>
+                            </div>
+                            <span class="px-sm py-xs bg-[#E8F5E9] text-[#28A745] rounded-lg font-label-md border border-[#28A745]/20">Active</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-sm border-t border-outline-variant pt-md">
+                            <button class="flex items-center justify-center gap-xs py-sm border border-primary text-primary rounded-lg font-label-md">
+                                <span class="material-symbols-outlined text-[18px]">edit</span> Edit
+                            </button>
+                            <button class="flex items-center justify-center gap-xs py-sm bg-primary text-on-primary rounded-lg font-label-md">
+                                <span class="material-symbols-outlined text-[18px]">receipt_long</span> Transactions
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                location.reload(); // Simple reload to restore Nelayan list for this demo
+            }
+        }
+    </script>
+<style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in-fade {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+    </style>
+</body></html>

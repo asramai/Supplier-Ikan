@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Form Pembelian Ikan - Asy-Syifa Panua</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error-container": "#ffdad6",
+                      "on-primary-fixed": "#002109",
+                      "tertiary-fixed-dim": "#66df75",
+                      "primary-fixed-dim": "#52e079",
+                      "on-tertiary-container": "#00390f",
+                      "error": "#ba1a1a",
+                      "on-tertiary-fixed-variant": "#00531a",
+                      "surface-container-low": "#f6f3f2",
+                      "on-secondary-fixed-variant": "#005224",
+                      "on-surface-variant": "#3d4a3d",
+                      "on-tertiary-fixed": "#002106",
+                      "secondary-fixed": "#92f9a7",
+                      "surface-dim": "#dcd9d9",
+                      "surface-tint": "#006e2f",
+                      "on-primary-fixed-variant": "#005322",
+                      "on-secondary": "#ffffff",
+                      "outline-variant": "#bccbb9",
+                      "on-primary": "#ffffff",
+                      "inverse-primary": "#52e079",
+                      "tertiary-container": "#31ae4b",
+                      "inverse-on-surface": "#f3f0f0",
+                      "on-secondary-fixed": "#00210a",
+                      "surface-container-high": "#eae8e7",
+                      "surface-variant": "#e4e2e1",
+                      "on-tertiary": "#ffffff",
+                      "tertiary-fixed": "#83fc8e",
+                      "surface-container-highest": "#e4e2e1",
+                      "tertiary": "#006e25",
+                      "surface-container": "#f0eded",
+                      "secondary-fixed-dim": "#76dc8d",
+                      "on-background": "#1b1c1c",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary": "#006d32",
+                      "on-surface": "#1b1c1c",
+                      "background": "#fbf9f8",
+                      "secondary-container": "#92f9a7",
+                      "on-error": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "inverse-surface": "#303030",
+                      "on-secondary-container": "#007435",
+                      "outline": "#6d7b6c",
+                      "surface-bright": "#fbf9f8",
+                      "surface": "#fbf9f8",
+                      "primary": "#006e2f",
+                      "on-primary-container": "#003a15",
+                      "primary-fixed": "#71fe93",
+                      "primary-container": "#00b050"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "sm": "8px",
+                      "xs": "4px",
+                      "gutter": "16px",
+                      "md": "16px",
+                      "base": "4px",
+                      "margin-mobile": "20px",
+                      "lg": "24px",
+                      "xl": "32px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Hanken Grotesk"],
+                      "financial-table": ["Hanken Grotesk"],
+                      "display-financial": ["Hanken Grotesk"],
+                      "body-md": ["Hanken Grotesk"],
+                      "label-md": ["Hanken Grotesk"],
+                      "headline-md": ["Hanken Grotesk"],
+                      "body-lg": ["Hanken Grotesk"]
+              },
+              "fontSize": {
+                      "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "financial-table": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                      "display-financial": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body { font-family: 'Hanken Grotesk', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .custom-shadow { box-shadow: 0 12px 24px -8px rgba(51, 51, 51, 0.08); }
+        .active-tab { transition: all 200ms ease; transform: scale(0.95); }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-32">
+<!-- Top App Bar -->
+<header class="bg-surface border-b border-outline-variant fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile py-sm">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-headline-md" data-icon="waves">waves</span>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Asy-Syifa Panua</h1>
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a corporate financial officer, clean-shaven, smiling warmly against a bright, minimalist office background. The lighting is soft and high-key, aligning with a professional light-mode aesthetic. The composition is a close-up portrait, focusing on the individual's approachable and trustworthy expression, emphasizing the brand's core values of reliability and growth." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSHVNMNb7x0ZQajc87DznPOx5Z_OnSlPRFsmcF-Pc4JINL2wlG2ZYImbRpH_W9N5E9i66t0V9K8ZHDKv5AezuzZdypyO_GYUnQ5OUT3J9jXrit4mQf76Cvcl9waKTzTf1tp9nU6IYH0Q82ns2_hVYWbpFk4aowCSYjPcsyoWP9NxJf3S3HA1fAyeBIsBrVb9FRreraMx92W_6pfwYFriYG35iTjYIx5MN5llrgvJNrHevj6hUiHMmcYQ"/>
+</div>
+</header>
+<main class="pt-24 px-margin-mobile max-w-2xl mx-auto">
+<div class="mb-lg">
+<h2 class="font-headline-lg text-headline-lg text-on-background">Input Pembelian Ikan</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Catat transaksi masuk hasil tangkapan nelayan hari ini.</p>
+</div>
+<!-- Form Section -->
+<section class="space-y-lg">
+<!-- Metadata Group -->
+<div class="bg-white border border-outline-variant rounded-xl p-md space-y-md">
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase">Nama Nelayan</label>
+<div class="relative">
+<select class="w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary appearance-none">
+<option>Pilih Nelayan...</option>
+<option>Abdullah Hasan</option>
+<option>Syamsul Bahri</option>
+<option>Udin Sedunia</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-md">
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase">Tanggal</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary" type="date" value="2023-10-27"/>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase">Kapal / Boat</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary" placeholder="Nama Kapal" type="text"/>
+</div>
+</div>
+</div>
+<!-- Item Input Group -->
+<div class="bg-white border border-outline-variant rounded-xl p-md space-y-md">
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase">Jenis Ikan</label>
+<div class="relative">
+<input class="w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary" id="fish-type" list="fish-list" placeholder="Cari Jenis Ikan..." type="text"/>
+<datalist id="fish-list">
+<option value="Cakalang">
+</option><option value="Tongkol">
+</option><option value="Tuna Yellowfin">
+</option><option value="Layang">
+</option><option value="Kerapu">
+</option></datalist>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-md">
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase">Berat (kg)</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary" id="input-weight" placeholder="0.0" type="number"/>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase">Harga per kg (Rp)</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary" id="input-price" placeholder="0" type="number"/>
+</div>
+</div>
+</div>
+<!-- Real-time Calculation Area -->
+<div class="bg-primary-container/10 border border-primary-container rounded-xl p-lg">
+<div class="flex justify-between items-center mb-sm">
+<span class="font-label-md text-label-md text-on-primary-container uppercase">Estimasi Total</span>
+<span class="bg-primary-container text-on-primary-container px-2 py-0.5 rounded text-[10px] font-bold uppercase" id="calc-status">Live</span>
+</div>
+<div class="flex flex-col gap-xs">
+<div class="flex justify-between">
+<span class="font-body-md text-body-md text-on-surface-variant">Total Berat</span>
+<span class="font-body-lg text-body-lg font-bold text-on-surface" id="total-weight">0 kg</span>
+</div>
+<div class="h-[1px] bg-outline-variant/30 my-xs"></div>
+<div class="flex justify-between items-end">
+<span class="font-body-md text-body-md text-on-surface-variant pb-1">Total Pembayaran</span>
+<span class="font-display-financial text-display-financial text-primary" id="total-price">Rp 0</span>
+</div>
+</div>
+</div>
+<!-- Payment Status Toggle -->
+<div class="bg-white border border-outline-variant rounded-xl p-md">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase block mb-md">Status Pembayaran</label>
+<div class="grid grid-cols-2 gap-sm p-1 bg-surface-container rounded-lg">
+<button class="flex items-center justify-center gap-xs py-md rounded-lg font-bold transition-all duration-200 bg-white shadow-sm text-primary" id="btn-paid" onclick="setStatus('paid')">
+<span class="material-symbols-outlined text-[20px]" data-icon="check_circle">check_circle</span>
+                        Lunas
+                    </button>
+<button class="flex items-center justify-center gap-xs py-md rounded-lg font-bold transition-all duration-200 text-on-surface-variant" id="btn-debt" onclick="setStatus('debt')">
+<span class="material-symbols-outlined text-[20px]" data-icon="schedule">schedule</span>
+                        Tempo / Utang
+                    </button>
+</div>
+</div>
+<!-- Action Button -->
+<button class="w-full bg-primary-container text-white py-lg rounded-xl font-headline-md text-headline-md font-bold shadow-lg shadow-primary/20 flex items-center justify-center gap-sm active:scale-[0.98] transition-transform">
+<span class="material-symbols-outlined" data-icon="print">print</span>
+                Simpan &amp; Cetak Struk
+            </button>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center bg-surface border-t border-outline-variant px-xs py-sm">
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+<span class="font-label-md text-label-md">Data</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-secondary-container rounded-xl px-3 py-1 text-on-secondary-container">
+<span class="material-symbols-outlined" data-icon="shopping_cart" data-weight="fill">shopping_cart</span>
+<span class="font-label-md text-label-md">Beli</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label-md text-label-md">Jual</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span class="font-label-md text-label-md">Laporan</span>
+</div>
+</nav>
+<script>
+        const inputWeight = document.getElementById('input-weight');
+        const inputPrice = document.getElementById('input-price');
+        const displayTotalWeight = document.getElementById('total-weight');
+        const displayTotalPrice = document.getElementById('total-price');
+
+        function formatRupiah(number) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(number);
+        }
+
+        function calculate() {
+            const weight = parseFloat(inputWeight.value) || 0;
+            const price = parseFloat(inputPrice.value) || 0;
+            const total = weight * price;
+
+            displayTotalWeight.innerText = `${weight.toLocaleString('id-ID')} kg`;
+            displayTotalPrice.innerText = formatRupiah(total);
+        }
+
+        inputWeight.addEventListener('input', calculate);
+        inputPrice.addEventListener('input', calculate);
+
+        function setStatus(type) {
+            const btnPaid = document.getElementById('btn-paid');
+            const btnDebt = document.getElementById('btn-debt');
+            
+            if (type === 'paid') {
+                btnPaid.className = 'flex items-center justify-center gap-xs py-md rounded-lg font-bold transition-all duration-200 bg-white shadow-sm text-primary';
+                btnDebt.className = 'flex items-center justify-center gap-xs py-md rounded-lg font-bold transition-all duration-200 text-on-surface-variant';
+                displayTotalPrice.classList.remove('text-error');
+                displayTotalPrice.classList.add('text-primary');
+            } else {
+                btnDebt.className = 'flex items-center justify-center gap-xs py-md rounded-lg font-bold transition-all duration-200 bg-white shadow-sm text-error';
+                btnPaid.className = 'flex items-center justify-center gap-xs py-md rounded-lg font-bold transition-all duration-200 text-on-surface-variant';
+                displayTotalPrice.classList.remove('text-primary');
+                displayTotalPrice.classList.add('text-error');
+            }
+        }
+    </script>
+</body></html>
