@@ -1,5 +1,5 @@
 import React from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import Header from './components/Header'
 import BottomNav from './components/BottomNav'
 import NetProfitCard from './components/NetProfitCard'
@@ -9,6 +9,10 @@ import StatusChips from './components/StatusChips'
 import FAB from './components/FAB'
 import PurchaseForm from './components/PurchaseForm'
 import LaporanLabaRugi from './components/LaporanLabaRugi'
+import Login from './components/Login'
+import MitraManagement from './components/MitraManagement'
+
+const PAGES_WITHOUT_NAV = ['/login']
 
 function Dashboard() {
   return (
@@ -22,17 +26,22 @@ function Dashboard() {
 }
 
 function App() {
+  const location = useLocation()
+  const showNav = !PAGES_WITHOUT_NAV.includes(location.pathname)
+
   return (
     <div className="bg-surface text-on-surface min-h-screen pb-32">
-      <Header />
+      {showNav && <Header />}
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/beli" element={<PurchaseForm />} />
         <Route path="/laporan" element={<LaporanLabaRugi />} />
+        <Route path="/mitra" element={<MitraManagement />} />
+        <Route path="/login" element={<Login />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-      <FAB />
-      <BottomNav />
+      {showNav && <FAB />}
+      {showNav && <BottomNav />}
     </div>
   )
 }

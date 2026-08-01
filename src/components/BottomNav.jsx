@@ -8,6 +8,7 @@ function BottomNav() {
     { icon: 'shopping_cart', label: 'Beli', path: '/beli', weight: 'fill' },
     { icon: 'payments', label: 'Jual', path: '/jual', weight: undefined },
     { icon: 'assessment', label: 'Laporan', path: '/laporan', weight: undefined },
+    { icon: 'groups', label: 'Mitra', path: '/mitra', weight: 'fill' },
   ]
 
   return (
