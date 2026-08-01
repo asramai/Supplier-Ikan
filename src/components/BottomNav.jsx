@@ -11,6 +11,7 @@ function BottomNav() {
     { icon: 'groups', label: 'Mitra', path: '/mitra', weight: 'fill' },
     { icon: 'group', label: 'Users', path: '/users', weight: 'fill' },
     { icon: 'inventory_2', label: 'Inventory', path: '/inventory', weight: 'fill' },
+    { icon: 'monitoring', label: 'Invest', path: '/invest', weight: 'fill' },
   ]
 
   return (
