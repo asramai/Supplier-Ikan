@@ -1,6 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 function LaporanLabaRugi() {
+  const [filterYear, setFilterYear] = useState('2025')
+  const [filterMonth, setFilterMonth] = useState('Semua')
+
   const expenseItems = [
     { category: 'Bahan Bakar (BBM)', sub: 'Solar Industri', value: 'Rp 5.200k' },
     { category: 'Es & Logistik', sub: 'Pendingin Kapal', value: 'Rp 1.450k' },
@@ -20,40 +23,74 @@ function LaporanLabaRugi() {
     { week: 'Minggu 4', sales: 90, cost: 45 },
   ]
 
+  const years = ['2025', '2024', '2023', '2022']
+  const months = ['Semua', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+
+  const filteredExpenseItems = filterMonth === 'Semua' ? expenseItems : expenseItems.filter((item) => item.category.includes(filterMonth) || item.sub.includes(filterMonth))
+
+  const filteredTransactions = filterMonth === 'Semua' ? transactions : transactions.filter((tx) => tx.date.includes(filterMonth) || tx.date.includes(filterYear))
+
+  const totalPendapatan = 'Rp 45.2M'
+  const totalPengeluaran = 'Rp 12.8M'
+  const totalLaba = 'Rp 32.400.000'
+
   return (
-    <div className="max-w-md mx-auto px-margin-mobile mt-lg">
-      <section className="mb-lg">
+    <div className="max-w-md mx-auto px-margin-mobile mt-lg animate-fade-in">
+      <section className="mb-lg animate-slide-up delay-100" style={{ animationFillMode: 'backwards' }}>
         <div className="flex justify-between items-end mb-md">
           <div>
             <h2 className="font-headline-lg text-headline-lg text-on-surface">Laporan Laba Rugi</h2>
-            <p className="font-body-md text-body-md text-on-surface-variant">Periode Operasional Fishery</p>
+            <p className="font-body-md text-body-md text-on-surface-variant">Periode Operasional Perikanan</p>
           </div>
-          <button className="flex items-center gap-xs px-sm py-xs bg-surface-container rounded-lg border border-outline-variant text-on-surface hover:bg-surface-container-high transition-colors">
-            <span className="material-symbols-outlined text-[18px]">calendar_today</span>
-            <span className="font-label-md text-label-md">Agustus 2023</span>
-          </button>
         </div>
       </section>
 
-      <section className="grid grid-cols-2 gap-md mb-xl">
-        <div className="col-span-1 bg-surface border border-outline-variant rounded-xl p-md">
+      <section className="mb-lg animate-slide-up delay-100" style={{ animationFillMode: 'backwards' }}>
+        <div className="flex flex-col sm:flex-row gap-md mb-lg">
+          <select
+            className="flex-1 bg-surface-container-lowest border border-outline-variant rounded-lg px-md py-md font-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+            value={filterYear}
+            onChange={(e) => setFilterYear(e.target.value)}
+          >
+            {years.map((y) => (
+              <option key={y} value={y}>{y}</option>
+            ))}
+          </select>
+          <select
+            className="flex-1 bg-surface-container-lowest border border-outline-variant rounded-lg px-md py-md font-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+            value={filterMonth}
+            onChange={(e) => setFilterMonth(e.target.value)}
+          >
+            {months.map((m) => (
+              <option key={m} value={m}>{m}</option>
+            ))}
+          </select>
+        </div>
+        <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-md mb-sm">
+          <p className="font-label-md text-label-md text-on-surface-variant">Filter Aktif</p>
+          <p className="font-headline-md text-headline-md text-on-surface">{filterYear} — {filterMonth === 'Semua' ? 'Seluruh Tahun' : filterMonth}</p>
+        </div>
+      </section>
+
+      <section className="grid grid-cols-2 gap-md mb-xl animate-slide-up">
+        <div className="col-span-1 bg-surface border border-outline-variant rounded-xl p-md card-hover">
           <div className="flex items-center gap-xs mb-xs">
             <span className="material-symbols-outlined text-primary text-[20px]">trending_up</span>
             <span className="font-label-md text-label-md text-on-surface-variant">PENDAPATAN</span>
           </div>
-          <div className="font-headline-md text-headline-md text-primary">Rp 45.2M</div>
+          <div className="font-headline-md text-headline-md text-primary">{totalPendapatan}</div>
         </div>
-        <div className="col-span-1 bg-surface border border-outline-variant rounded-xl p-md">
+        <div className="col-span-1 bg-surface border border-outline-variant rounded-xl p-md card-hover">
           <div className="flex items-center gap-xs mb-xs">
             <span className="material-symbols-outlined text-on-surface-variant text-[20px]">trending_down</span>
             <span className="font-label-md text-label-md text-on-surface-variant">PENGELUARAN</span>
           </div>
-          <div className="font-headline-md text-headline-md text-on-surface-variant">Rp 12.8M</div>
+          <div className="font-headline-md text-headline-md text-on-surface-variant">{totalPengeluaran}</div>
         </div>
         <div className="col-span-2 bg-[#E8F5E9] border border-primary-container rounded-xl p-lg relative overflow-hidden">
           <div className="flex flex-col relative z-10">
             <span className="font-label-md text-label-md text-primary mb-xs">TOTAL LABA BERSIH (NET)</span>
-            <div className="font-display-financial text-display-financial text-primary">Rp 32.400.000</div>
+            <div className="font-display-financial text-display-financial text-primary">{totalLaba}</div>
             <div className="flex items-center gap-xs mt-sm text-primary font-label-md">
               <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>stars</span>
               <span>Meningkat 12% dari bulan lalu</span>
@@ -65,7 +102,7 @@ function LaporanLabaRugi() {
         </div>
       </section>
 
-      <section className="bg-surface border border-outline-variant rounded-xl p-md mb-xl">
+      <section className="bg-surface border border-outline-variant rounded-xl p-md mb-xl animate-slide-up delay-200" style={{ animationFillMode: 'backwards' }}>
         <h3 className="font-label-md text-label-md text-on-surface-variant mb-lg uppercase tracking-wider">Perbandingan Penjualan vs Beban</h3>
         <div className="flex items-end justify-between h-48 gap-lg px-md">
           {barData.map((item) => (
@@ -90,7 +127,7 @@ function LaporanLabaRugi() {
         </div>
       </section>
 
-      <section className="mb-lg">
+      <section className="mb-lg animate-slide-up delay-300" style={{ animationFillMode: 'backwards' }}>
         <h3 className="font-headline-md text-headline-md text-on-surface mb-md">Rincian Pengeluaran (OpEx)</h3>
         <div className="bg-surface border border-outline-variant rounded-xl overflow-hidden">
           <div className="grid grid-cols-12 bg-secondary p-md border-b-2 border-primary">
@@ -98,7 +135,7 @@ function LaporanLabaRugi() {
             <div className="col-span-6 text-right font-financial-table text-financial-table text-white">Nilai</div>
           </div>
           <div className="divide-y divide-outline-variant">
-            {expenseItems.map((item) => (
+            {filteredExpenseItems.map((item) => (
               <div key={item.category} className="grid grid-cols-12 p-md zebra-row items-center">
                 <div className="col-span-6 flex flex-col">
                   <span className="font-body-lg text-body-lg text-on-surface">{item.category}</span>
@@ -111,13 +148,13 @@ function LaporanLabaRugi() {
         </div>
       </section>
 
-      <section className="mt-xl">
+      <section className="mt-xl animate-slide-up delay-400" style={{ animationFillMode: 'backwards' }}>
         <div className="flex justify-between items-center mb-md">
           <h3 className="font-headline-md text-headline-md text-on-surface">Status Transaksi Terakhir</h3>
           <span className="text-primary font-label-md text-label-md cursor-pointer hover:underline">Lihat Semua</span>
         </div>
         <div className="space-y-sm">
-          {transactions.map((tx) => (
+          {filteredTransactions.map((tx) => (
             <div key={tx.name} className="flex justify-between items-center p-md bg-surface border border-outline-variant rounded-lg">
               <div className="flex items-center gap-md">
                 <div className={`${tx.iconBg} ${tx.iconColor} p-sm rounded-lg`}>

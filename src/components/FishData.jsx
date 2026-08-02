@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 
 function FishData() {
   const [searchTerm, setSearchTerm] = useState('')
+  const [quickFilter, setQuickFilter] = useState('Semua')
 
   const fishData = [
     { name: 'Kerapu Sunu', id: 'FR-001', grade: 'A', gradeBg: 'bg-tertiary-container/10', gradeText: 'text-tertiary', price: 'Rp 125.000', stock: '450', stockColor: '' },
@@ -11,12 +12,52 @@ function FishData() {
     { name: 'Cakalang', id: 'FR-005', grade: 'B', gradeBg: 'bg-outline-variant/30', gradeText: 'text-on-surface-variant', price: 'Rp 28.000', stock: '2.150', stockColor: '' },
   ]
 
-  const filtered = fishData.filter((fish) =>
-    fish.name.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const parsePrice = (priceStr) => {
+    const num = parseInt(priceStr.replace(/[^\d]/g, ''), 10)
+    return isNaN(num) ? 0 : num
+  }
+
+  const getFilteredData = () => {
+    let result = fishData.filter((fish) =>
+      fish.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      fish.id.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+
+    switch (quickFilter) {
+      case 'Grade A':
+        result = result.filter((f) => f.grade === 'A')
+        break
+      case 'Grade B':
+        result = result.filter((f) => f.grade === 'B')
+        break
+      case 'Grade C':
+        result = result.filter((f) => f.grade === 'C')
+        break
+      case 'Stok Melimpah':
+        result = result.filter((f) => parseInt(f.stock.replace(/\./g, ''), 10) > 100)
+        break
+      case 'Stok Rendah':
+        result = result.filter((f) => parseInt(f.stock.replace(/\./g, ''), 10) <= 100)
+        break
+      case 'Harga Tertinggi':
+        result = [...result].sort((a, b) => parsePrice(b.price) - parsePrice(a.price))
+        break
+      case 'Harga Terendah':
+        result = [...result].sort((a, b) => parsePrice(a.price) - parsePrice(b.price))
+        break
+      default:
+        break
+    }
+
+    return result
+  }
+
+  const filtered = getFilteredData()
+
+  const quickFilters = ['Semua', 'Grade A', 'Grade B', 'Grade C', 'Stok Melimpah', 'Stok Rendah', 'Harga Tertinggi', 'Harga Terendah']
 
   return (
-    <div className="px-margin-mobile pt-lg">
+    <div className="px-margin-mobile pt-lg animate-fade-in">
       <div className="mb-lg">
         <h2 className="font-headline-lg text-headline-lg text-on-surface mb-xs">Daftar Jenis Ikan</h2>
         <p className="font-body-md text-on-surface-variant">Kelola master data komoditas perikanan Anda.</p>
@@ -36,15 +77,15 @@ function FishData() {
       <div className="grid grid-cols-2 gap-gutter mb-lg">
         <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-md">
           <p className="font-label-md text-on-surface-variant uppercase mb-xs">Total Jenis</p>
-          <p className="font-display-financial text-display-financial text-primary">24</p>
+          <p className="font-display-financial text-display-financial text-primary">{fishData.length}</p>
         </div>
         <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-md">
           <p className="font-label-md text-on-surface-variant uppercase mb-xs">Stok Kritis</p>
-          <p className="font-display-financial text-display-financial text-error">3</p>
+          <p className="font-display-financial text-display-financial text-error">{fishData.filter((f) => parseInt(f.stock.replace(/\./g, ''), 10) <= 100).length}</p>
         </div>
       </div>
 
-      <div className="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden">
+      <div className="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden mb-lg">
         <div className="overflow-x-auto">
           <table className="w-full text-left zebra-table border-collapse">
             <thead className="bg-surface-container-low border-b-2 border-primary">
@@ -79,13 +120,24 @@ function FishData() {
         </div>
       </div>
 
+      {filtered.length === 0 && (
+        <div className="text-center py-lg">
+          <p className="font-body-md text-body-md text-on-surface-variant">Tidak ada data ditemukan</p>
+        </div>
+      )}
+
       <div className="mt-lg">
         <p className="font-label-md text-on-surface-variant uppercase mb-sm">Filter Cepat</p>
         <div className="flex gap-sm overflow-x-auto no-scrollbar pb-sm">
-          <button className="bg-primary text-on-primary px-md py-sm rounded-full font-label-md whitespace-nowrap">Semua</button>
-          <button className="bg-surface-container-high text-on-surface-variant px-md py-sm rounded-full font-label-md whitespace-nowrap">Grade A</button>
-          <button className="bg-surface-container-high text-on-surface-variant px-md py-sm rounded-full font-label-md whitespace-nowrap">Stok Melimpah</button>
-          <button className="bg-surface-container-high text-on-surface-variant px-md py-sm rounded-full font-label-md whitespace-nowrap">Harga Tertinggi</button>
+          {quickFilters.map((filter) => (
+            <button
+              key={filter}
+              className={`px-md py-sm rounded-full font-label-md text-label-md whitespace-nowrap transition-colors ${quickFilter === filter ? 'bg-primary text-on-primary shadow-sm' : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container'}`}
+              onClick={() => setQuickFilter(filter)}
+            >
+              {filter}
+            </button>
+          ))}
         </div>
       </div>
     </div>

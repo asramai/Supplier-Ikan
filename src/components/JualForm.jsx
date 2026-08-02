@@ -1,20 +1,21 @@
 import React, { useState } from 'react'
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
-import { getNelayanList } from '../utils/mitraData'
+import { getVendorList } from '../utils/mitraData'
 import { getIdentity } from '../utils/companyIdentity'
 
-function PurchaseForm() {
+function JualForm() {
   const identity = getIdentity()
   const [activeTab, setActiveTab] = useState('tambah')
   const [monthFilter, setMonthFilter] = useState('Semua')
   const [items, setItems] = useState([{ fishType: '', weight: '', price: '' }])
-  const [formData, setFormData] = useState({ fisherman: '', date: '', boat: '' })
+  const [vendor, setVendor] = useState('')
+  const [formData, setFormData] = useState({ date: '', invoiceNumber: '' })
   const [paymentStatus, setPaymentStatus] = useState('paid')
   const [errors, setErrors] = useState({})
   const [touched, setTouched] = useState({})
 
-  const nelayanList = getNelayanList()
+  const vendorList = getVendorList()
   const fishOptions = ['Cakalang', 'Tongkol', 'Tuna Yellowfin', 'Layang', 'Kerapu']
 
   const totalWeight = items.reduce((sum, item) => sum + (parseFloat(item.weight) || 0), 0)
@@ -26,8 +27,9 @@ function PurchaseForm() {
 
   const validate = () => {
     const newErrors = {}
-    if (!formData.fisherman) newErrors.fisherman = 'Nelayan wajib dipilih'
+    if (!vendor) newErrors.vendor = 'Vendor wajib dipilih'
     if (!formData.date) newErrors.date = 'Tanggal wajib diisi'
+    if (!formData.invoiceNumber) newErrors.invoiceNumber = 'No. Faktur wajib diisi'
     items.forEach((item, index) => {
       if (!item.fishType) newErrors[`fishType_${index}`] = `Jenis ikan wajib diisi item ${index + 1}`
       if (!item.weight || parseFloat(item.weight) <= 0) newErrors[`weight_${index}`] = `Berat harus lebih dari 0 item ${index + 1}`
@@ -91,17 +93,15 @@ function PurchaseForm() {
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(14)
     doc.setTextColor(0, 0, 0)
-    doc.text('STRUK PEMBELIAN IKAN', pageWidth / 2, yPos, { align: 'center' })
+    doc.text('STRUK PENJUALAN IKAN', pageWidth / 2, yPos, { align: 'center' })
     yPos += 8
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(10)
-    doc.text(`No. Transaksi: ${tx?.id || `TRX-${Date.now().toString().slice(-6)}`}`, margin, yPos)
+    doc.text(`No. Faktur: ${tx?.id || formData.invoiceNumber || '-'}`, margin, yPos)
     yPos += 5
     doc.text(`Tanggal: ${tx?.date || formData.date || new Date().toISOString().split('T')[0]}`, margin, yPos)
     yPos += 5
-    doc.text(`Nelayan: ${tx?.fisherman || formData.fisherman || '-'}`, margin, yPos)
-    yPos += 5
-    doc.text(`Kapal: ${formData.boat || '-'}`, margin, yPos)
+    doc.text(`Vendor: ${tx?.vendor || vendor || '-'}`, margin, yPos)
     yPos += 10
 
     const tableBody = tx
@@ -142,7 +142,7 @@ function PurchaseForm() {
     doc.setTextColor(100, 100, 100)
     doc.text('Dokumen ini dicetak secara otomatis oleh sistem.', pageWidth / 2, yPos, { align: 'center' })
     doc.text(`Dicetak: ${new Date().toLocaleString('id-ID')}`, pageWidth / 2, yPos + 5, { align: 'center' })
-    doc.save(`Struk-Pembelian-${tx?.fisherman || formData.fisherman || 'ikan'}-${Date.now()}.pdf`)
+    doc.save(`Struk-Penjualan-${tx?.vendor || vendor || 'ikan'}-${Date.now()}.pdf`)
   }
 
   const handleSubmit = (e) => {
@@ -155,8 +155,8 @@ function PurchaseForm() {
   }
 
   const historyData = [
-    { id: 'TRX-001', fisherman: 'Budi Santoso', items: [{ fishType: 'Tuna Yellowfin', weight: '25.5', price: '76000' }, { fishType: 'Kerapu', weight: '10.0', price: '132000' }], totalWeight: 35.5, totalPrice: 3217500, date: '24 Oct 2025', status: 'Lunas', statusBg: 'bg-[#E8F5E9]', statusText: 'text-[#28A745]' },
-    { id: 'TRX-002', fisherman: 'Andi Wijaya', items: [{ fishType: 'Skipjack', weight: '50.0', price: '85000' }, { fishType: 'Tongkol', weight: '30.0', price: '58000' }], totalWeight: 80.0, totalPrice: 6190000, date: '23 Oct 2025', status: 'Lunas', statusBg: 'bg-[#E8F5E9]', statusText: 'text-[#28A745]' },
+    { id: 'TRX-V001', vendor: 'FreshFish Jakarta', items: [{ fishType: 'Tuna Yellowfin', weight: '30.0', price: '85000' }, { fishType: 'Cakalang', weight: '20.0', price: '65000' }], totalWeight: 50.0, totalPrice: 3850000, date: '24 Oct 2025', status: 'Lunas', statusBg: 'bg-[#E8F5E9]', statusText: 'text-[#28A745]' },
+    { id: 'TRX-V002', vendor: 'UD Maritim Jaya', items: [{ fishType: 'Layang', weight: '40.0', price: '45000' }], totalWeight: 40.0, totalPrice: 1800000, date: '23 Oct 2025', status: 'Hutang', statusBg: 'bg-[#FDEDEC]', statusText: 'text-[#DC3545]' },
   ]
 
   const months = ['Semua', 'Oktober 2025', 'September 2025', 'Agustus 2025', 'Juli 2025']
@@ -165,30 +165,30 @@ function PurchaseForm() {
   return (
     <div className="pt-24 px-margin-mobile max-w-2xl mx-auto animate-fade-in">
       <div className="mb-lg">
-        <h2 className="font-headline-lg text-headline-lg text-on-background">Pembelian Ikan</h2>
-        <p className="font-body-md text-body-md text-on-surface-variant">Catat transaksi masuk hasil tangkapan nelayan.</p>
+        <h2 className="font-headline-lg text-headline-lg text-on-background">Penjualan Ikan</h2>
+        <p className="font-body-md text-body-md text-on-surface-variant">Catat transaksi keluar hasil jual ke vendor.</p>
       </div>
 
       <div className="flex p-1 bg-surface-container-low rounded-xl border border-outline-variant mb-lg">
-        <button className={`flex-1 py-sm px-md rounded-lg font-label-md text-label-md transition-all ${activeTab === 'tambah' ? 'bg-primary-container text-on-primary-container shadow-sm' : 'text-on-surface-variant hover:bg-surface-container-high'}`} onClick={() => setActiveTab('tambah')}>Tambah Transaksi Pembelian</button>
-        <button className={`flex-1 py-sm px-md rounded-lg font-label-md text-label-md transition-all ${activeTab === 'riwayat' ? 'bg-primary-container text-on-primary-container shadow-sm' : 'text-on-surface-variant hover:bg-surface-container-high'}`} onClick={() => setActiveTab('riwayat')}>Riwayat Transaksi Pembelian</button>
+        <button className={`flex-1 py-sm px-md rounded-lg font-label-md text-label-md transition-all ${activeTab === 'tambah' ? 'bg-primary-container text-on-primary-container shadow-sm' : 'text-on-surface-variant hover:bg-surface-container-high'}`} onClick={() => setActiveTab('tambah')}>Tambah Transaksi Penjualan</button>
+        <button className={`flex-1 py-sm px-md rounded-lg font-label-md text-label-md transition-all ${activeTab === 'riwayat' ? 'bg-primary-container text-on-primary-container shadow-sm' : 'text-on-surface-variant hover:bg-surface-container-high'}`} onClick={() => setActiveTab('riwayat')}>Riwayat Transaksi Penjualan</button>
       </div>
 
       {activeTab === 'tambah' ? (
         <form className="space-y-lg" onSubmit={handleSubmit} noValidate>
           <div className="bg-white border border-outline-variant rounded-xl p-md space-y-md card-hover">
             <div className="flex flex-col gap-xs">
-              <label className="font-label-md text-label-md text-on-surface-variant uppercase">Nama Nelayan</label>
+              <label className="font-label-md text-label-md text-on-surface-variant uppercase">Nama Vendor</label>
               <div className="relative">
-                <select className={`w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary appearance-none ${touched.fisherman && errors.fisherman ? 'border-error focus:border-error' : ''}`} value={formData.fisherman} onChange={(e) => setFormData({ ...formData, fisherman: e.target.value })} onBlur={() => handleBlur('fisherman')}>
-                  <option value="">Pilih Nelayan...</option>
-                  {nelayanList.map((nelayan) => (
-                    <option key={nelayan.name} value={nelayan.name}>{nelayan.name}</option>
+                <select className={`w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary appearance-none ${touched.vendor && errors.vendor ? 'border-error focus:border-error' : ''}`} value={vendor} onChange={(e) => setVendor(e.target.value)} onBlur={() => handleBlur('vendor')}>
+                  <option value="">Pilih Vendor...</option>
+                  {vendorList.map((v) => (
+                    <option key={v.name} value={v.name}>{v.name}</option>
                   ))}
                 </select>
                 <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
               </div>
-              {touched.fisherman && errors.fisherman && <p className="text-error font-label-md text-label-md mt-xs">{errors.fisherman}</p>}
+              {touched.vendor && errors.vendor && <p className="text-error font-label-md text-label-md mt-xs">{errors.vendor}</p>}
             </div>
             <div className="grid grid-cols-2 gap-md">
               <div className="flex flex-col gap-xs">
@@ -197,8 +197,9 @@ function PurchaseForm() {
                 {touched.date && errors.date && <p className="text-error font-label-md text-label-md mt-xs">{errors.date}</p>}
               </div>
               <div className="flex flex-col gap-xs">
-                <label className="font-label-md text-label-md text-on-surface-variant uppercase">Kapal / Boat</label>
-                <input className="w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary" placeholder="Nama Kapal" type="text" value={formData.boat} onChange={(e) => setFormData({ ...formData, boat: e.target.value })} />
+                <label className="font-label-md text-label-md text-on-surface-variant uppercase">No. Faktur</label>
+                <input className={`w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary ${touched.invoiceNumber && errors.invoiceNumber ? 'border-error focus:border-error' : ''}`} placeholder="INV-001" type="text" value={formData.invoiceNumber} onChange={(e) => setFormData({ ...formData, invoiceNumber: e.target.value })} onBlur={() => handleBlur('invoiceNumber')} />
+                {touched.invoiceNumber && errors.invoiceNumber && <p className="text-error font-label-md text-label-md mt-xs">{errors.invoiceNumber}</p>}
               </div>
             </div>
           </div>
@@ -281,7 +282,7 @@ function PurchaseForm() {
             </div>
           </div>
 
-          <button type="submit" className="w-full bg-primary-container text-white py-lg rounded-xl font-headline-md text-headline-md font-bold shadow-lg shadow-primary/20 flex items-center justify-center gap-sm active:scale-[0.98] transition-transform">
+          <button type="submit" className="w-full bg-secondary-container text-on-secondary-container py-lg rounded-xl font-headline-md text-headline-md font-bold shadow-lg shadow-secondary/20 flex items-center justify-center gap-sm active:scale-[0.98] transition-transform">
             <span className="material-symbols-outlined">print</span> Simpan & Cetak Struk
           </button>
         </form>
@@ -290,7 +291,7 @@ function PurchaseForm() {
           <div className="flex flex-col sm:flex-row gap-md">
             <div className="relative flex-1">
               <span className="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-              <input className="w-full pl-10 pr-md py-md bg-surface-container-lowest border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md transition-all" placeholder="Cari nelayan atau jenis ikan..." type="text" />
+              <input className="w-full pl-10 pr-md py-md bg-surface-container-lowest border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md transition-all" placeholder="Cari vendor atau jenis ikan..." type="text" />
             </div>
             <select className="bg-surface-container-lowest border border-outline-variant rounded-lg px-md py-md font-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={monthFilter} onChange={(e) => setMonthFilter(e.target.value)}>
               {months.map((m) => (
@@ -304,7 +305,7 @@ function PurchaseForm() {
                 <thead className="bg-surface-container-low border-b-2 border-primary">
                   <tr>
                     <th className="px-md py-sm font-financial-table text-secondary whitespace-nowrap">ID</th>
-                    <th className="px-md py-sm font-financial-table text-secondary whitespace-nowrap">Nelayan</th>
+                    <th className="px-md py-sm font-financial-table text-secondary whitespace-nowrap">Vendor</th>
                     <th className="px-md py-sm font-financial-table text-secondary whitespace-nowrap">Ikan</th>
                     <th className="px-md py-sm font-financial-table text-secondary text-right">Berat</th>
                     <th className="px-md py-sm font-financial-table text-secondary text-right">Total</th>
@@ -319,7 +320,7 @@ function PurchaseForm() {
                     filteredHistory.map((row) => (
                       <tr key={row.id} className="active:bg-surface-container-high transition-colors">
                         <td className="px-md py-3 font-label-md text-label-md text-on-surface-variant">{row.id}</td>
-                        <td className="px-md py-3 font-body-md text-body-md font-bold text-on-surface">{row.fisherman}</td>
+                        <td className="px-md py-3 font-body-md text-body-md font-bold text-on-surface">{row.vendor}</td>
                         <td className="px-md py-3 font-body-md text-body-md">
                           {Array.isArray(row.items) && row.items.length > 0
                             ? `${row.items[0].fishType}${row.items.length > 1 ? ` +${row.items.length - 1} jenis` : ''}`
@@ -356,4 +357,4 @@ function PurchaseForm() {
   )
 }
 
-export default PurchaseForm
+export default JualForm
