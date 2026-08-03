@@ -1,18 +1,25 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { getNelayanList } from '../utils/mitraData'
 import { getIdentity } from '../utils/companyIdentity'
+import { generateInvoiceNumber, getCurrentYear } from '../utils/invoiceCounter'
 
 function PurchaseForm() {
   const identity = getIdentity()
   const [activeTab, setActiveTab] = useState('tambah')
   const [monthFilter, setMonthFilter] = useState('Semua')
   const [items, setItems] = useState([{ fishType: '', weight: '', price: '' }])
-  const [formData, setFormData] = useState({ fisherman: '', date: '', boat: '' })
+  const [formData, setFormData] = useState({ fisherman: '', date: '', boat: '', invoiceNumber: '' })
   const [paymentStatus, setPaymentStatus] = useState('paid')
   const [errors, setErrors] = useState({})
   const [touched, setTouched] = useState({})
+
+  useEffect(() => {
+    if (activeTab === 'tambah') {
+      setFormData((prev) => ({ ...prev, invoiceNumber: generateInvoiceNumber('beli') }))
+    }
+  }, [activeTab])
 
   const nelayanList = getNelayanList()
   const fishOptions = ['Cakalang', 'Tongkol', 'Tuna Yellowfin', 'Layang', 'Kerapu']
@@ -95,7 +102,7 @@ function PurchaseForm() {
     yPos += 8
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(10)
-    doc.text(`No. Transaksi: ${tx?.id || `TRX-${Date.now().toString().slice(-6)}`}`, margin, yPos)
+    doc.text(`No. Transaksi: ${tx?.id || formData.invoiceNumber || `TRX/${getCurrentYear()}/B.0000`}`, margin, yPos)
     yPos += 5
     doc.text(`Tanggal: ${tx?.date || formData.date || new Date().toISOString().split('T')[0]}`, margin, yPos)
     yPos += 5
@@ -155,8 +162,8 @@ function PurchaseForm() {
   }
 
   const historyData = [
-    { id: 'TRX-001', fisherman: 'Budi Santoso', items: [{ fishType: 'Tuna Yellowfin', weight: '25.5', price: '76000' }, { fishType: 'Kerapu', weight: '10.0', price: '132000' }], totalWeight: 35.5, totalPrice: 3217500, date: '24 Oct 2025', status: 'Lunas', statusBg: 'bg-[#E8F5E9]', statusText: 'text-[#28A745]' },
-    { id: 'TRX-002', fisherman: 'Andi Wijaya', items: [{ fishType: 'Skipjack', weight: '50.0', price: '85000' }, { fishType: 'Tongkol', weight: '30.0', price: '58000' }], totalWeight: 80.0, totalPrice: 6190000, date: '23 Oct 2025', status: 'Lunas', statusBg: 'bg-[#E8F5E9]', statusText: 'text-[#28A745]' },
+    { id: 'TRX/2025/B.0001', fisherman: 'Budi Santoso', items: [{ fishType: 'Tuna Yellowfin', weight: '25.5', price: '76000' }, { fishType: 'Kerapu', weight: '10.0', price: '132000' }], totalWeight: 35.5, totalPrice: 3217500, date: '24 Oct 2025', status: 'Lunas', statusBg: 'bg-[#E8F5E9]', statusText: 'text-[#28A745]' },
+    { id: 'TRX/2025/B.0002', fisherman: 'Andi Wijaya', items: [{ fishType: 'Skipjack', weight: '50.0', price: '85000' }, { fishType: 'Tongkol', weight: '30.0', price: '58000' }], totalWeight: 80.0, totalPrice: 6190000, date: '23 Oct 2025', status: 'Lunas', statusBg: 'bg-[#E8F5E9]', statusText: 'text-[#28A745]' },
   ]
 
   const months = ['Semua', 'Oktober 2025', 'September 2025', 'Agustus 2025', 'Juli 2025']
@@ -190,17 +197,21 @@ function PurchaseForm() {
               </div>
               {touched.fisherman && errors.fisherman && <p className="text-error font-label-md text-label-md mt-xs">{errors.fisherman}</p>}
             </div>
-            <div className="grid grid-cols-2 gap-md">
-              <div className="flex flex-col gap-xs">
-                <label className="font-label-md text-label-md text-on-surface-variant uppercase">Tanggal</label>
-                <input className={`w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary ${touched.date && errors.date ? 'border-error focus:border-error' : ''}`} type="date" value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} onBlur={() => handleBlur('date')} />
-                {touched.date && errors.date && <p className="text-error font-label-md text-label-md mt-xs">{errors.date}</p>}
-              </div>
-              <div className="flex flex-col gap-xs">
-                <label className="font-label-md text-label-md text-on-surface-variant uppercase">Kapal / Boat</label>
-                <input className="w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary" placeholder="Nama Kapal" type="text" value={formData.boat} onChange={(e) => setFormData({ ...formData, boat: e.target.value })} />
-              </div>
-            </div>
+<div className="grid grid-cols-2 gap-md">
+               <div className="flex flex-col gap-xs">
+                 <label className="font-label-md text-label-md text-on-surface-variant uppercase">Tanggal</label>
+                 <input className={`w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary ${touched.date && errors.date ? 'border-error focus:border-error' : ''}`} type="date" value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} onBlur={() => handleBlur('date')} />
+                 {touched.date && errors.date && <p className="text-error font-label-md text-label-md mt-xs">{errors.date}</p>}
+               </div>
+               <div className="flex flex-col gap-xs">
+                 <label className="font-label-md text-label-md text-on-surface-variant uppercase">No. Invoice</label>
+                 <input className="w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg text-on-surface-variant" type="text" value={formData.invoiceNumber} readOnly />
+               </div>
+             </div>
+             <div className="flex flex-col gap-xs mt-md">
+               <label className="font-label-md text-label-md text-on-surface-variant uppercase">Kapal / Boat</label>
+               <input className="w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary" placeholder="Nama Kapal" type="text" value={formData.boat} onChange={(e) => setFormData({ ...formData, boat: e.target.value })} />
+             </div>
           </div>
 
           <div className="bg-white border border-outline-variant rounded-xl p-md space-y-md card-hover">

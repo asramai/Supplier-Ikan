@@ -2,6 +2,14 @@ import { getPermissions } from './roles'
 
 const STORAGE_KEY = 'asy_syifa_auth'
 
+async function hashPassword(password) {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(password + 'asy-syifa-panua-salt-2024')
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
+}
+
 function generateMockToken(user) {
   const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }))
   const payload = btoa(JSON.stringify({
@@ -23,10 +31,22 @@ function decodeToken(token) {
   }
 }
 
+function verifyTokenIntegrity(token) {
+  const parts = token.split('.')
+  if (parts.length !== 3) return false
+  try {
+    const payload = JSON.parse(atob(parts[1]))
+    const expectedSig = btoa('mock-signature-' + payload.sub)
+    return parts[2] === expectedSig
+  } catch {
+    return false
+  }
+}
+
 const mockUsersDB = {
   admin: {
     username: 'admin',
-    password: 'admin123',
+    passwordHash: 'a80cb5d9efbeedafc85c83b2d231d865f71404058ee2a0b4f7cd6fa5cb27abb7',
     role: 'Admin',
     name: 'Ahmad Al-Fatih',
     email: 'ahmad.fatih@panua.com',
@@ -37,7 +57,7 @@ const mockUsersDB = {
   },
   operator: {
     username: 'operator',
-    password: 'oper123',
+    passwordHash: '3b5be3236702d3fa03b4732e862a0d8977c90fa3b0f5bb5d751b8d7a116d69cc',
     role: 'Operator',
     name: 'Rahmat Panua',
     email: 'rahmat.p@ops.id',
@@ -48,7 +68,7 @@ const mockUsersDB = {
   },
   investor: {
     username: 'investor',
-    password: 'invest123',
+    passwordHash: 'f21462db307cec97575df82bdfb9ccc37d9965649f837bcdc986202bb212c00e',
     role: 'Investor',
     name: 'Siti Yusufina',
     email: 'siti.y@investor.com',
@@ -59,7 +79,7 @@ const mockUsersDB = {
   },
   owner: {
     username: 'owner',
-    password: 'owner123',
+    passwordHash: '5f214d6c12ff64a7a835fc8112b84d0da1379da0e39f9121d9f65af46ff78e3b',
     role: 'Owner',
     name: 'Haji Dahlan',
     email: 'haji.dahlan@owner.com',
@@ -71,8 +91,8 @@ const mockUsersDB = {
 }
 
 export function login(username, password) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
+  return new Promise(async (resolve, reject) => {
+    setTimeout(async () => {
       if (!username || !password) {
         reject(new Error('Username dan password wajib diisi'))
         return
@@ -80,7 +100,14 @@ export function login(username, password) {
 
       const user = mockUsersDB[username]
 
-      if (!user || user.password !== password) {
+      if (!user) {
+        reject(new Error('Username atau password salah'))
+        return
+      }
+
+      const inputHash = await hashPassword(password)
+
+      if (user.passwordHash !== inputHash) {
         reject(new Error('Username atau password salah'))
         return
       }
@@ -106,6 +133,7 @@ export function login(username, password) {
           permissions,
         },
         expiresAt: Date.now() + 8 * 60 * 60 * 1000,
+        tokenHash: await hashPassword(token),
       }
 
       localStorage.setItem(STORAGE_KEY, JSON.stringify(session))
@@ -126,6 +154,11 @@ export function getSession() {
     const session = JSON.parse(raw)
 
     if (Date.now() > session.expiresAt) {
+      localStorage.removeItem(STORAGE_KEY)
+      return null
+    }
+
+    if (!verifyTokenIntegrity(session.token)) {
       localStorage.removeItem(STORAGE_KEY)
       return null
     }
@@ -199,4 +232,35 @@ export function toggleUserStatus(username) {
 
 export function getMockUsersDB() {
   return mockUsersDB
+}
+
+export function forgotPassword(email) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (!email || !email.trim()) {
+        reject(new Error('Email wajib diisi'))
+        return
+      }
+
+      const foundUser = Object.values(mockUsersDB).find(
+        (u) => u.email.toLowerCase() === email.toLowerCase()
+      )
+
+      if (!foundUser) {
+        reject(new Error('Email tidak terdaftar dalam sistem'))
+        return
+      }
+
+      if (!foundUser.isActive) {
+        reject(new Error('Akun Anda telah dinonaktifkan. Hubungi administrator.'))
+        return
+      }
+
+      resolve({
+        message: 'Link reset kata sandi telah dikirim ke email Anda.',
+        email: foundUser.email,
+        username: foundUser.username,
+      })
+    }, 1500)
+  })
 }

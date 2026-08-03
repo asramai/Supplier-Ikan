@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { getIdentity, saveIdentity } from '../utils/companyIdentity'
+import { resetInvoiceCounters } from '../utils/invoiceCounter'
 
 function IdentitasPT() {
   const [identity, setIdentity] = useState(getIdentity())
   const [saved, setSaved] = useState(false)
   const [previewLogo, setPreviewLogo] = useState(identity.logo || '')
+  const [showResetModal, setShowResetModal] = useState(false)
+  const [resetSuccess, setResetSuccess] = useState(false)
 
   useEffect(() => {
     const id = getIdentity()
@@ -40,6 +43,13 @@ function IdentitasPT() {
     saveIdentity(reset)
     setSaved(true)
     setTimeout(() => setSaved(false), 3000)
+  }
+
+  const handleResetInvoice = () => {
+    resetInvoiceCounters()
+    setShowResetModal(false)
+    setResetSuccess(true)
+    setTimeout(() => setResetSuccess(false), 3000)
   }
 
   return (
@@ -142,9 +152,25 @@ function IdentitasPT() {
           </button>
         </div>
 
+        <div className="flex gap-md">
+          <button
+            type="button"
+            className="flex-1 bg-error-container text-on-error-container py-md rounded-xl font-headline-md text-headline-md font-bold active:scale-[0.98] transition-transform"
+            onClick={() => setShowResetModal(true)}
+          >
+            Reset Nomor Invoice
+          </button>
+        </div>
+
         {saved && (
           <div className="bg-[#E8F5E9] text-[#28A745] px-4 py-2 rounded-lg font-body-md text-body-md text-center">
             Identitas berhasil disimpan
+          </div>
+        )}
+
+        {resetSuccess && (
+          <div className="bg-[#E8F5E9] text-[#28A745] px-4 py-2 rounded-lg font-body-md text-body-md text-center">
+            Nomor invoice berhasil direset
           </div>
         )}
 
@@ -164,10 +190,38 @@ function IdentitasPT() {
               <p className="font-label-md text-label-md text-on-surface-variant text-center">--- PREVIEW STRUK ---</p>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  )
-}
+</div>
+       </div>
 
-export default IdentitasPT
+       {showResetModal && (
+         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-md" onClick={() => setShowResetModal(false)}>
+           <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
+             <div className="flex justify-between items-center mb-lg">
+               <h3 className="font-headline-md text-headline-md text-on-surface">Reset Nomor Invoice</h3>
+               <button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" onClick={() => setShowResetModal(false)}>close</button>
+             </div>
+             <p className="font-body-md text-body-md text-on-surface-variant mb-lg">
+               Apakah Anda yakin ingin mereset nomor invoice? Nomor invoice akan dimulai dari <strong>TRX/2026/B.0001</strong> dan <strong>TRX/2026/J.0001</strong> untuk transaksi Beli dan Jual.
+             </p>
+             <div className="flex gap-sm">
+               <button
+                 className="flex-1 py-md rounded-xl font-label-md border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors"
+                 onClick={() => setShowResetModal(false)}
+               >
+                 Batal
+               </button>
+               <button
+                 className="flex-1 py-md rounded-xl font-label-md bg-error text-on-error hover:opacity-90 transition-opacity"
+                 onClick={handleResetInvoice}
+               >
+                 Reset
+               </button>
+             </div>
+           </div>
+         </div>
+       )}
+     </div>
+   )
+ }
+
+ export default IdentitasPT

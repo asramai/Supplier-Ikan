@@ -13,7 +13,7 @@ function FAB() {
 
   const leftPosition = isMobile ? 'left-margin-mobile' : collapsed ? 'left-16' : 'left-48'
 
-  const PAGES_WITHOUT_FAB = ['/laporan', '/beli', '/jual', '/users', '/login']
+  const PAGES_WITHOUT_FAB = ['/laporan', '/beli', '/jual', '/users', '/login', '/profile']
 
   if (PAGES_WITHOUT_FAB.includes(location.pathname)) {
     return null

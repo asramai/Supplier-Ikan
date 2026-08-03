@@ -79,11 +79,10 @@ const MENU_ITEMS = [
   { path: '/jual', label: 'Jual', icon: 'payments', permission: 'jual', weight: undefined },
   { path: '/laporan', label: 'Laporan', icon: 'assessment', permission: 'laporan', weight: undefined },
   { path: '/mitra', label: 'Mitra', icon: 'groups', permission: 'mitra', weight: 'fill' },
-  { path: '/users', label: 'Pengguna', icon: 'group', permission: 'users', weight: 'fill' },
+  { path: '/users', label: 'Master', icon: 'group', permission: 'users', weight: 'fill' },
   { path: '/inventory', label: 'Inventaris', icon: 'inventory_2', permission: 'inventory', weight: 'fill' },
   { path: '/invest', label: 'Investasi', icon: 'monitoring', permission: 'invest', weight: 'fill' },
   { path: '/identitas', label: 'Identitas', icon: 'badge', permission: 'identitas', weight: undefined },
-  { path: '/profile', label: 'Profil', icon: 'person', permission: 'profile', weight: undefined },
 ]
 
 export function getPermissions(role) {

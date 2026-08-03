@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 
-<html class="light" lang="en"><head>
+<html class="light" lang="id"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Asy-Syifa Panua | Operational Dashboard</title>
+<title>Asy-Syifa Panua | Dasbor Operasional</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -141,7 +141,7 @@
 <main class="px-margin-mobile pt-lg flex flex-col gap-lg">
 <!-- Net Profit Focus Section -->
 <section class="bg-white border border-outline-variant rounded-xl p-md flex flex-col gap-xs">
-<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Net Profit</span>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Laba Bersih</span>
 <div class="flex items-end justify-between">
 <span class="font-display-financial text-display-financial text-primary">Rp 60.000.000</span>
 <div class="flex items-center text-primary bg-secondary-container px-2 py-1 rounded-full gap-1">
@@ -158,7 +158,7 @@
 <span class="material-symbols-outlined text-primary bg-primary-container/20 p-2 rounded-lg" data-icon="payments">payments</span>
 </div>
 <div>
-<span class="font-label-md text-label-md text-on-surface-variant">Total Sales</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Total Penjualan</span>
 <p class="font-headline-md text-headline-md text-on-surface">Rp 150M</p>
 </div>
 </div>
@@ -168,7 +168,7 @@
 <span class="material-symbols-outlined text-on-surface-variant bg-surface-container-high p-2 rounded-lg" data-icon="shopping_bag">shopping_bag</span>
 </div>
 <div>
-<span class="font-label-md text-label-md text-on-surface-variant">Total Purchases</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Total Pembelian</span>
 <p class="font-headline-md text-headline-md text-on-surface">Rp 90M</p>
 </div>
 </div>
@@ -176,8 +176,8 @@
 <!-- Quick Actions / Quick Summary -->
 <section class="flex flex-col gap-md">
 <div class="flex items-center justify-between">
-<h2 class="font-headline-md text-headline-md text-on-surface">Recent Purchases</h2>
-<button class="text-primary font-label-md text-label-md hover:underline">View All</button>
+<h2 class="font-headline-md text-headline-md text-on-surface">Pembelian Terbaru</h2>
+  <button class="text-primary font-label-md text-label-md hover:underline">Lihat Semua</button>
 </div>
 <!-- Zebra-Striped Table Container -->
 <div class="bg-white border border-outline-variant rounded-xl overflow-hidden">
@@ -185,10 +185,10 @@
 <table class="w-full text-left border-collapse">
 <thead class="bg-primary border-b-2 border-primary-container">
 <tr>
-<th class="px-md py-3 font-financial-table text-white whitespace-nowrap">Fisherman</th>
-<th class="px-md py-3 font-financial-table text-white whitespace-nowrap">Fish Type</th>
-<th class="px-md py-3 font-financial-table text-white whitespace-nowrap">Weight</th>
-<th class="px-md py-3 font-financial-table text-white whitespace-nowrap">Total</th>
+<th class="px-md py-3 font-financial-table text-white whitespace-nowrap">Nelayan</th>
+  <th class="px-md py-3 font-financial-table text-white whitespace-nowrap">Jenis Ikan</th>
+  <th class="px-md py-3 font-financial-table text-white whitespace-nowrap">Berat</th>
+  <th class="px-md py-3 font-financial-table text-white whitespace-nowrap">Total</th>
 </tr>
 </thead>
 <tbody class="divide-y divide-outline-variant/30">
@@ -243,22 +243,22 @@
 </section>
 <!-- Status Overview Chip Row -->
 <section class="flex flex-col gap-sm">
-<h3 class="font-label-md text-label-md text-on-surface-variant uppercase">Batch Status</h3>
-<div class="flex gap-sm overflow-x-auto scroll-hide pb-2">
-<div class="bg-[#E8F5E9] text-[#28A745] px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">
-<span class="w-2 h-2 rounded-full bg-[#28A745]"></span>
-<span class="font-label-md text-label-md">Processing (12)</span>
-</div>
-<div class="bg-[#F0F0F0] text-[#6C757D] px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">
-<span class="w-2 h-2 rounded-full bg-[#6C757D]"></span>
-<span class="font-label-md text-label-md">Ready (5)</span>
-</div>
-<div class="bg-[#FDEDEC] text-[#DC3545] px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">
-<span class="w-2 h-2 rounded-full bg-[#DC3545]"></span>
-<span class="font-label-md text-label-md">Pending Payment (2)</span>
-</div>
-</div>
-</section>
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase">Status Batch</h3>
+  <div class="flex gap-sm overflow-x-auto scroll-hide pb-2">
+  <div class="bg-[#E8F5E9] text-[#28A745] px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">
+  <span class="w-2 h-2 rounded-full bg-[#28A745]"></span>
+  <span class="font-label-md text-label-md">Proses (12)</span>
+  </div>
+  <div class="bg-[#F0F0F0] text-[#6C757D] px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">
+  <span class="w-2 h-2 rounded-full bg-[#6C757D]"></span>
+  <span class="font-label-md text-label-md">Siap (5)</span>
+  </div>
+  <div class="bg-[#FDEDEC] text-[#DC3545] px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">
+  <span class="w-2 h-2 rounded-full bg-[#DC3545]"></span>
+  <span class="font-label-md text-label-md">Menunggu Pembayaran (2)</span>
+  </div>
+  </div>
+  </section>
 </main>
 <!-- FAB for quick action -->
 <button class="fixed bottom-24 right-margin-mobile w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center active-scale transition-all z-40">
@@ -269,7 +269,7 @@
 <!-- Home (Active) -->
 <a class="flex flex-col items-center justify-center bg-secondary-container rounded-xl px-3 py-1 text-on-secondary-container transition-all scale-95 duration-200" href="#">
 <span class="material-symbols-outlined" data-icon="dashboard" data-weight="fill">dashboard</span>
-<span class="font-label-md text-label-md">Home</span>
+<span class="font-label-md text-label-md">Beranda</span>
 </a>
 <!-- Data -->
 <a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:bg-surface-container-high transition-all" href="#">

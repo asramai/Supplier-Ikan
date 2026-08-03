@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { forgotPassword, getMockUsersDB } from '../utils/auth'
 
 function Login() {
   const [username, setUsername] = useState('')
@@ -8,6 +9,11 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showForgotModal, setShowForgotModal] = useState(false)
+  const [forgotEmail, setForgotEmail] = useState('')
+  const [forgotLoading, setForgotLoading] = useState(false)
+  const [forgotError, setForgotError] = useState('')
+  const [forgotSuccess, setForgotSuccess] = useState(false)
   const { signIn } = useAuth()
   const navigate = useNavigate()
 
@@ -24,6 +30,29 @@ function Login() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleForgotPassword = async (e) => {
+    e.preventDefault()
+    setForgotLoading(true)
+    setForgotError('')
+    setForgotSuccess(false)
+
+    try {
+      const result = await forgotPassword(forgotEmail)
+      setForgotSuccess(true)
+    } catch (err) {
+      setForgotError(err.message)
+    } finally {
+      setForgotLoading(false)
+    }
+  }
+
+  const resetForgotForm = () => {
+    setShowForgotModal(false)
+    setForgotEmail('')
+    setForgotError('')
+    setForgotSuccess(false)
   }
 
   return (
@@ -109,7 +138,13 @@ Masuk
               )}
             </button>
             <div className="flex justify-center">
-              <a className="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors py-xs" href="#">LUPA KATA SANDI?</a>
+              <button
+                type="button"
+                className="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors py-xs bg-transparent border-none cursor-pointer"
+                onClick={() => setShowForgotModal(true)}
+              >
+                LUPA KATA SANDI?
+              </button>
             </div>
           </div>
         </form>
@@ -122,19 +157,97 @@ Masuk
           </div>
           <div className="flex gap-lg">
             <div className="flex items-center gap-xs text-on-surface-variant">
-              <span className="material-symbols-outlined text-[18px]">verified_user</span>
-              <span className="font-label-md text-label-md uppercase">Terenkripsi</span>
+              <span className="material-symbols-outlined text-[18px] text-green-600">verified_user</span>
+              <span className="font-label-md text-label-md uppercase">SHA-256 Terenkripsi</span>
             </div>
             <div className="flex items-center gap-xs text-on-surface-variant">
-              <span className="material-symbols-outlined text-[18px]">gpp_good</span>
-              <span className="font-label-md text-label-md uppercase">Tersertifikasi</span>
+              <span className="material-symbols-outlined text-[18px] text-green-600">shield</span>
+              <span className="font-label-md text-label-md uppercase">Token Terverifikasi</span>
             </div>
           </div>
-<p className="font-body-md text-body-md text-on-surface-variant mt-lg">
-                Belum punya akun? <a className="text-primary font-bold hover:underline" href="#">Hubungi Admin</a>
+          <p className="font-body-md text-body-md text-on-surface-variant mt-lg">
+            Belum punya akun?{' '}
+            <a
+              className="text-primary font-bold hover:underline"
+              href={`https://wa.me/${getMockUsersDB().admin.phone.replace(/\D/g, '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Hubungi Admin
+            </a>
           </p>
         </footer>
       </main>
+
+      {showForgotModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-md" onClick={resetForgotForm}>
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-lg">
+              <h3 className="font-headline-md text-headline-md text-on-surface">Lupa Kata Sandi</h3>
+              <button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" onClick={resetForgotForm}>close</button>
+            </div>
+
+            {!forgotSuccess ? (
+              <>
+                <p className="font-body-md text-body-md text-on-surface-variant mb-md">
+                  Masukkan email yang terdaftar untuk menerima link reset kata sandi.
+                </p>
+                <form onSubmit={handleForgotPassword} className="space-y-md">
+                  <div className="flex flex-col gap-xs">
+                    <label className="font-label-md text-label-md text-on-surface-variant uppercase">Email</label>
+                    <input
+                      className="w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                      placeholder="contoh@email.com"
+                      type="email"
+                      value={forgotEmail}
+                      onChange={(e) => setForgotEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  {forgotError && (
+                    <div className="bg-error-container text-on-error-container px-4 py-2 rounded-lg font-body-md text-body-md text-center">
+                      {forgotError}
+                    </div>
+                  )}
+                  <button
+                    type="submit"
+                    className="w-full bg-primary-container text-on-primary-container py-md rounded-xl font-headline-md text-headline-md font-bold active:scale-[0.98] transition-transform disabled:opacity-50"
+                    disabled={forgotLoading}
+                  >
+                    {forgotLoading ? (
+                      <>
+                        <span className="material-symbols-outlined animate-spin inline-block">progress_activity</span>
+                        Mengirim...
+                      </>
+                    ) : (
+                      'Kirim Link Reset'
+                    )}
+                  </button>
+                </form>
+              </>
+            ) : (
+              <div className="text-center">
+                <div className="w-16 h-16 bg-success-container rounded-full flex items-center justify-center mx-auto mb-md">
+                  <span className="material-symbols-outlined text-[32px] text-on-success-container">check_circle</span>
+                </div>
+                <h4 className="font-headline-md text-headline-md text-on-surface mb-sm">Email Terkirim</h4>
+                <p className="font-body-md text-body-md text-on-surface-variant mb-md">
+                  Link reset kata sandi telah dikirim ke <strong>{forgotEmail}</strong>.
+                </p>
+                <p className="font-body-sm text-body-sm text-outline mb-lg">
+                  Dalam simulasi ini, email tidak dikirim secara nyata. Pada sistem produksi, pengguna akan menerima email berisi tautan untuk mengatur ulang kata sandi mereka.
+                </p>
+                <button
+                  className="w-full bg-primary-container text-on-primary-container py-md rounded-xl font-headline-md text-headline-md font-bold active:scale-[0.98] transition-transform"
+                  onClick={resetForgotForm}
+                >
+                  Kembali ke Masuk
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

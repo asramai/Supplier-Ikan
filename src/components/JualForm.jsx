@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { getVendorList } from '../utils/mitraData'
 import { getIdentity } from '../utils/companyIdentity'
+import { generateInvoiceNumber, getCurrentYear } from '../utils/invoiceCounter'
 
 function JualForm() {
   const identity = getIdentity()
@@ -14,6 +15,12 @@ function JualForm() {
   const [paymentStatus, setPaymentStatus] = useState('paid')
   const [errors, setErrors] = useState({})
   const [touched, setTouched] = useState({})
+
+  useEffect(() => {
+    if (activeTab === 'tambah') {
+      setFormData((prev) => ({ ...prev, invoiceNumber: generateInvoiceNumber('jual') }))
+    }
+  }, [activeTab])
 
   const vendorList = getVendorList()
   const fishOptions = ['Cakalang', 'Tongkol', 'Tuna Yellowfin', 'Layang', 'Kerapu']
@@ -155,8 +162,8 @@ function JualForm() {
   }
 
   const historyData = [
-    { id: 'TRX-V001', vendor: 'FreshFish Jakarta', items: [{ fishType: 'Tuna Yellowfin', weight: '30.0', price: '85000' }, { fishType: 'Cakalang', weight: '20.0', price: '65000' }], totalWeight: 50.0, totalPrice: 3850000, date: '24 Oct 2025', status: 'Lunas', statusBg: 'bg-[#E8F5E9]', statusText: 'text-[#28A745]' },
-    { id: 'TRX-V002', vendor: 'UD Maritim Jaya', items: [{ fishType: 'Layang', weight: '40.0', price: '45000' }], totalWeight: 40.0, totalPrice: 1800000, date: '23 Oct 2025', status: 'Hutang', statusBg: 'bg-[#FDEDEC]', statusText: 'text-[#DC3545]' },
+    { id: 'TRX/2025/J.0001', vendor: 'FreshFish Jakarta', items: [{ fishType: 'Tuna Yellowfin', weight: '30.0', price: '85000' }, { fishType: 'Cakalang', weight: '20.0', price: '65000' }], totalWeight: 50.0, totalPrice: 3850000, date: '24 Oct 2025', status: 'Lunas', statusBg: 'bg-[#E8F5E9]', statusText: 'text-[#28A745]' },
+    { id: 'TRX/2025/J.0002', vendor: 'UD Maritim Jaya', items: [{ fishType: 'Layang', weight: '40.0', price: '45000' }], totalWeight: 40.0, totalPrice: 1800000, date: '23 Oct 2025', status: 'Hutang', statusBg: 'bg-[#FDEDEC]', statusText: 'text-[#DC3545]' },
   ]
 
   const months = ['Semua', 'Oktober 2025', 'September 2025', 'Agustus 2025', 'Juli 2025']
@@ -190,18 +197,17 @@ function JualForm() {
               </div>
               {touched.vendor && errors.vendor && <p className="text-error font-label-md text-label-md mt-xs">{errors.vendor}</p>}
             </div>
-            <div className="grid grid-cols-2 gap-md">
-              <div className="flex flex-col gap-xs">
-                <label className="font-label-md text-label-md text-on-surface-variant uppercase">Tanggal</label>
-                <input className={`w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary ${touched.date && errors.date ? 'border-error focus:border-error' : ''}`} type="date" value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} onBlur={() => handleBlur('date')} />
-                {touched.date && errors.date && <p className="text-error font-label-md text-label-md mt-xs">{errors.date}</p>}
-              </div>
-              <div className="flex flex-col gap-xs">
-                <label className="font-label-md text-label-md text-on-surface-variant uppercase">No. Faktur</label>
-                <input className={`w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary ${touched.invoiceNumber && errors.invoiceNumber ? 'border-error focus:border-error' : ''}`} placeholder="INV-001" type="text" value={formData.invoiceNumber} onChange={(e) => setFormData({ ...formData, invoiceNumber: e.target.value })} onBlur={() => handleBlur('invoiceNumber')} />
-                {touched.invoiceNumber && errors.invoiceNumber && <p className="text-error font-label-md text-label-md mt-xs">{errors.invoiceNumber}</p>}
-              </div>
-            </div>
+<div className="grid grid-cols-2 gap-md">
+               <div className="flex flex-col gap-xs">
+                 <label className="font-label-md text-label-md text-on-surface-variant uppercase">Tanggal</label>
+                 <input className={`w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary ${touched.date && errors.date ? 'border-error focus:border-error' : ''}`} type="date" value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} onBlur={() => handleBlur('date')} />
+                 {touched.date && errors.date && <p className="text-error font-label-md text-label-md mt-xs">{errors.date}</p>}
+               </div>
+               <div className="flex flex-col gap-xs">
+                 <label className="font-label-md text-label-md text-on-surface-variant uppercase">No. Invoice</label>
+                 <input className="w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg text-on-surface-variant" type="text" value={formData.invoiceNumber} readOnly />
+               </div>
+             </div>
           </div>
 
           <div className="bg-white border border-outline-variant rounded-xl p-md space-y-md card-hover">
