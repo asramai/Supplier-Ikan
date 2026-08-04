@@ -1,206 +1,127 @@
-import React, { useState, useEffect } from 'react'
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import { SidebarProvider, useSidebar } from './context/SidebarContext'
-import Header from './components/Header'
-import BottomNav from './components/BottomNav'
-import NetProfitCard from './components/NetProfitCard'
-import StatCards from './components/StatCards'
-import PurchasesTable from './components/PurchasesTable'
-import StatusChips from './components/StatusChips'
-import FAB from './components/FAB'
-import PurchaseForm from './components/PurchaseForm'
-import LaporanLabaRugi from './components/LaporanLabaRugi'
-import Login from './components/Login'
-import MitraManagement from './components/MitraManagement'
-import UserManagement from './components/UserManagement'
-import RoleSettings from './components/RoleSettings'
-import FishData from './components/FishData'
-import InventoryPage from './components/InventoryPage'
-import InvestorPortal from './components/InvestorPortal'
-import ProfileSettings from './components/ProfileSettings'
-import ProfileDetail from './components/ProfileDetail'
-import JualForm from './components/JualForm'
-import IdentitasPT from './components/IdentitasPT'
-import ProtectedRoute from './components/ProtectedRoute'
-import { SkeletonLoader, StatCardSkeleton } from './components/SkeletonLoader'
+import React, { useState } from 'react'
+import { NavLink, useLocation } from 'react-router-dom'
+import {
+  MdDashboard,
+  MdShoppingCart,
+  MdSell,
+  MdBarChart,
+  MdGridMore,
+  MdClose,
+  MdSetMeal,
+  MdPeople,
+  MdSupervisedUserAccess,
+  MdInventory,
+  MdTrendingUp,
+  MdBusiness
+} from 'react-icons/md'
 
-const PAGES_WITHOUT_NAV = ['/login']
+export default function BottomNav() {
+  const [showMoreMenu, setShowMoreMenu] = useState(false)
+  const location = useLocation()
 
-function Dashboard() {
-  const [loading, setLoading] = useState(true)
+  // Menu Utama yang tampil langsung di Bottom Bar (Max 4-5)
+  const mainNavItems = [
+    { label: 'Home', path: '/', icon: MdDashboard },
+    { label: 'Beli', path: '/beli', icon: MdShoppingCart },
+    { label: 'Jual', path: '/jual', icon: MdSell },
+    { label: 'Laporan', path: '/laporan', icon: MdBarChart },
+  ]
 
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 800)
-    return () => clearTimeout(timer)
-  }, [])
+  // Menu Tambahan yang dimasukkan ke dalam Pop-up "Lainnya"
+  const extraNavItems = [
+    { label: 'Data Ikan', path: '/data', icon: MdSetMeal },
+    { label: 'Mitra Nelayan', path: '/mitra', icon: MdPeople },
+    { label: 'Master User', path: '/users', icon: MdSupervisedUserAccess },
+    { label: 'Inventaris', path: '/inventory', icon: MdInventory },
+    { label: 'Investasi', path: '/invest', icon: MdTrendingUp },
+    { label: 'Identitas PT', path: '/identitas', icon: MdBusiness },
+  ]
 
-  if (loading) {
-    return (
-      <main className="px-margin-mobile pt-lg flex flex-col gap-lg">
-        <div className="grid grid-cols-2 gap-md">
-          <StatCardSkeleton />
-          <StatCardSkeleton />
-        </div>
-        <div className="bg-surface border border-outline-variant rounded-xl p-md">
-          <SkeletonLoader variant="text" width="40%" height="18" />
-          <div className="mt-md space-y-sm">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="flex gap-md p-md">
-                <SkeletonLoader variant="text" width="25%" height="16" />
-                <SkeletonLoader variant="text" width="25%" height="16" />
-                <SkeletonLoader variant="text" width="20%" height="16" />
-                <SkeletonLoader variant="text" width="20%" height="16" />
-              </div>
-            ))}
+  // Cek apakah menu yang aktif ada di dalam menu "Lainnya"
+  const isExtraActive = extraNavItems.some((item) => item.path === location.pathname)
+
+  return (
+    <>
+      {/* --- POP-UP MENU "LAINNYA" --- */}
+      {showMoreMenu && (
+        <div className="fixed inset-0 z-50 flex flex-col justify-end bg-black/60 backdrop-blur-sm animate-fade-in lg:hidden">
+          {/* Overlay Click-to-Close */}
+          <div className="flex-1" onClick={() => setShowMoreMenu(false)} />
+
+          {/* Panel Menu Grid */}
+          <div className="bg-surface rounded-t-2xl p-5 border-t border-outline-variant shadow-2xl space-y-4">
+            <div className="flex justify-between items-center border-b border-outline-variant pb-3">
+              <h3 className="font-semibold text-base text-on-surface">Menu Lainnya</h3>
+              <button
+                onClick={() => setShowMoreMenu(false)}
+                className="p-1 rounded-full text-on-surface-variant hover:bg-surface-variant"
+              >
+                <MdClose size={24} />
+              </button>
+            </div>
+
+            {/* Grid 3 Kolom */}
+            <div className="grid grid-cols-3 gap-3">
+              {extraNavItems.map((item) => {
+                const Icon = item.icon
+                const isActive = location.pathname === item.path
+                return (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setShowMoreMenu(false)}
+                    className={`flex flex-col items-center justify-center p-3 rounded-xl transition-all ${
+                      isActive
+                        ? 'bg-primary/10 text-primary font-semibold'
+                        : 'text-on-surface-variant hover:bg-surface-variant'
+                    }`}
+                  >
+                    <Icon size={26} className="mb-1" />
+                    <span className="text-xs text-center leading-tight">{item.label}</span>
+                  </NavLink>
+                )
+              })}
+            </div>
           </div>
         </div>
-      </main>
-    )
-  }
+      )}
 
-  return (
-    <main className="px-margin-mobile pt-lg flex flex-col gap-lg">
-      <NetProfitCard />
-      <StatCards />
-      <PurchasesTable />
-      <StatusChips />
-    </main>
-  )
-}
+      {/* --- BOTTOM NAVIGATION BAR --- */}
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-surface/95 backdrop-blur-md border-t border-outline-variant px-2 py-2 lg:hidden shadow-lg">
+        <div className="flex justify-around items-center">
+          {/* Loop Menu Utama */}
+          {mainNavItems.map((item) => {
+            const Icon = item.icon
+            return (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className={({ isActive }) =>
+                  `flex flex-col items-center justify-center w-full py-1 rounded-lg transition-colors ${
+                    isActive ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-on-surface'
+                  }`
+                }
+              >
+                <Icon size={24} />
+                <span className="text-[11px] mt-0.5">{item.label}</span>
+              </NavLink>
+            )
+          })}
 
-function AppContent() {
-  const location = useLocation()
-  const showNav = !PAGES_WITHOUT_NAV.includes(location.pathname)
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024
-  const { collapsed } = useSidebar()
-
-  return (
-    <div className="bg-surface text-on-surface min-h-screen pb-32">
-      {showNav && <Header />}
-      <div className={`transition-all duration-300 ease-in-out ${isMobile ? 'pl-0' : collapsed ? 'pl-16' : 'pl-48'}`}>
-        <div className="animate-fade-in">
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute permission="dashboard">
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/beli"
-              element={
-                <ProtectedRoute permission="beli">
-                  <PurchaseForm />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/jual"
-              element={
-                <ProtectedRoute permission="jual">
-                  <JualForm />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/laporan"
-              element={
-                <ProtectedRoute permission="laporan">
-                  <LaporanLabaRugi />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/mitra"
-              element={
-                <ProtectedRoute permission="mitra">
-                  <MitraManagement />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/users"
-              element={
-                <ProtectedRoute permission="users">
-                  <UserManagement />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/users/roles"
-              element={
-                <ProtectedRoute permission="manageUsers">
-                  <RoleSettings />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/inventory"
-              element={
-                <ProtectedRoute permission="inventory">
-                  <InventoryPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/invest"
-              element={
-                <ProtectedRoute permission="invest">
-                  <InvestorPortal />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute permission="profile">
-                  <ProfileSettings />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/profile/detail"
-              element={
-                <ProtectedRoute permission="profile">
-                  <ProfileDetail />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/data"
-              element={
-                <ProtectedRoute permission="data">
-                  <FishData />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/identitas"
-              element={
-                <ProtectedRoute permission="identitas">
-                  <IdentitasPT />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          {/* Tombol Menu "Lainnya" */}
+          <button
+            onClick={() => setShowMoreMenu(!showMoreMenu)}
+            className={`flex flex-col items-center justify-center w-full py-1 rounded-lg transition-colors ${
+              showMoreMenu || isExtraActive
+                ? 'text-primary font-bold'
+                : 'text-on-surface-variant hover:text-on-surface'
+            }`}
+          >
+            <MdGridMore size={24} />
+            <span className="text-[11px] mt-0.5">Lainnya</span>
+          </button>
         </div>
-      </div>
-      {showNav && <BottomNav />}
-      <FAB />
-    </div>
+      </nav>
+    </>
   )
 }
-
-function App() {
-  return (
-    <SidebarProvider>
-      <AppContent />
-    </SidebarProvider>
-  )
-}
-
-export default App
