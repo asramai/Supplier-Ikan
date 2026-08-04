@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { getIdentity } from '../utils/companyIdentity'
+import { addMitraEntry, updateMitraStatusLocal, getNelayanList, getVendorList } from '../utils/mitraData'
+import { getTransactions } from '../services/supabaseService'
 
 function MitraManagement() {
   const identity = getIdentity()
@@ -13,6 +15,11 @@ function MitraManagement() {
   const [selectedMitra, setSelectedMitra] = useState(null)
   const [newMitra, setNewMitra] = useState({ name: '', phone: '', type: 'nelayan' })
   const [editMitra, setEditMitra] = useState({ name: '', phone: '' })
+  const [nelayanData, setNelayanData] = useState([])
+  const [vendorData, setVendorData] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [mitraTransactions, setMitraTransactions] = useState([])
+  const [loadingTx, setLoadingTx] = useState(false)
 
   useEffect(() => {
     const handleOpenAdd = () => setShowAddModal(true)
@@ -20,76 +27,35 @@ function MitraManagement() {
     return () => window.removeEventListener('openAddMitra', handleOpenAdd)
   }, [])
 
-  const [nelayanData, setNelayanData] = useState([
-    {
-      name: 'Haji Sulaiman',
-      phone: '+62 812 3456 7890',
-      icon: 'anchor',
-      status: 'Aktif',
-      statusBg: 'bg-[#E8F5E9]',
-      statusText: 'text-[#28A745]',
-      statusBorder: 'border-[#28A745]/20',
-    },
-    {
-      name: 'UD Maritim Jaya',
-      phone: '+62 811 9988 7766',
-      icon: 'directions_boat',
-      status: 'Tidak Aktif',
-      statusBg: 'bg-[#F0F0F0]',
-      statusText: 'text-[#6C757D]',
-      statusBorder: 'border-[#6C757D]/20',
-    },
-    {
-      name: 'Koperasi Nelayan Panua',
-      phone: '+62 813 1122 3344',
-      icon: 'account_balance_wallet',
-      status: 'Aktif',
-      statusBg: 'bg-[#E8F5E9]',
-      statusText: 'text-[#28A745]',
-      statusBorder: 'border-[#28A745]/20',
-    },
-  ])
-
-  const [vendorData, setVendorData] = useState([
-    {
-      name: 'FreshFish Jakarta',
-      phone: '+62 21 788 9900',
-      icon: 'storefront',
-      status: 'Aktif',
-      statusBg: 'bg-[#E8F5E9]',
-      statusText: 'text-[#28A745]',
-      statusBorder: 'border-[#28A745]/20',
-    },
-  ])
+  useEffect(() => {
+    const loadMitra = async () => {
+      setLoading(true)
+      try {
+        const [nelayan, vendor] = await Promise.all([
+          getNelayanList(),
+          getVendorList(),
+        ])
+        setNelayanData(nelayan.map((n, i) => ({ ...n, id: `nelayan-${i}`, icon: 'anchor', statusBg: n.status === 'Aktif' ? 'bg-[#E8F5E9]' : 'bg-[#F0F0F0]', statusText: n.status === 'Aktif' ? 'text-[#28A745]' : 'text-[#6C757D]', statusBorder: n.status === 'Aktif' ? 'border-[#28A745]/20' : 'border-[#6C757D]/20' })))
+        setVendorData(vendor.map((v, i) => ({ ...v, id: `vendor-${i}`, icon: 'storefront', statusBg: v.status === 'Aktif' ? 'bg-[#E8F5E9]' : 'bg-[#F0F0F0]', statusText: v.status === 'Aktif' ? 'text-[#28A745]' : 'text-[#6C757D]', statusBorder: v.status === 'Aktif' ? 'border-[#28A745]/20' : 'border-[#6C757D]/20' })))
+      } catch {}
+      setLoading(false)
+    }
+    loadMitra()
+  }, [])
 
   const currentData = activeTab === 'nelayan' ? nelayanData : vendorData
   const statusOptions = ['Semua', 'Aktif', 'Tidak Aktif']
   const filteredData = statusFilter === 'Semua' ? currentData : currentData.filter((item) => item.status === statusFilter)
 
-  const transaksiData = {
-    'Haji Sulaiman': [
-      { id: 'TRX-N001', fish: 'Tuna Yellowfin', weight: '45.5 kg', price: 'Rp 3.87M', date: '24 Oct 2025', status: 'Lunas' },
-      { id: 'TRX-N002', fish: 'Cakalang', weight: '80.0 kg', price: 'Rp 2.24M', date: '20 Oct 2025', status: 'Lunas' },
-    ],
-    'UD Maritim Jaya': [
-      { id: 'TRX-N003', fish: 'Layang', weight: '60.0 kg', price: 'Rp 2.70M', date: '18 Oct 2025', status: 'Hutang' },
-    ],
-    'Koperasi Nelayan Panua': [
-      { id: 'TRX-N004', fish: 'Tongkol', weight: '55.0 kg', price: 'Rp 1.82M', date: '22 Oct 2025', status: 'Lunas' },
-      { id: 'TRX-N005', fish: 'Kerapu', weight: '30.0 kg', price: 'Rp 1.65M', date: '15 Oct 2025', status: 'Lunas' },
-    ],
-    'FreshFish Jakarta': [
-      { id: 'TRX-V001', fish: 'Tuna Yellowfin', weight: '50.0 kg', price: 'Rp 4.25M', date: '24 Oct 2025', status: 'Lunas' },
-      { id: 'TRX-V002', fish: 'Cakalang', weight: '100.0 kg', price: 'Rp 2.80M', date: '23 Oct 2025', status: 'Hutang' },
-    ],
-  }
-
-  const toggleMitraStatus = (mitraName) => {
+  const toggleMitraStatus = async (mitraName) => {
+    const newStatus = activeTab === 'nelayan'
+      ? (nelayanData.find((m) => m.name === mitraName)?.status === 'Aktif' ? 'Tidak Aktif' : 'Aktif')
+      : (vendorData.find((m) => m.name === mitraName)?.status === 'Aktif' ? 'Tidak Aktif' : 'Aktif')
+    await updateMitraStatusLocal(mitraName, newStatus)
     if (activeTab === 'nelayan') {
       setNelayanData((prev) =>
         prev.map((m) => {
           if (m.name === mitraName) {
-            const newStatus = m.status === 'Aktif' ? 'Tidak Aktif' : 'Aktif'
             return {
               ...m,
               status: newStatus,
@@ -105,7 +71,6 @@ function MitraManagement() {
       setVendorData((prev) =>
         prev.map((m) => {
           if (m.name === mitraName) {
-            const newStatus = m.status === 'Aktif' ? 'Tidak Aktif' : 'Aktif'
             return {
               ...m,
               status: newStatus,
@@ -120,7 +85,8 @@ function MitraManagement() {
     }
   }
 
-  const handleAddMitra = () => {
+  const handleAddMitra = async () => {
+    await addMitraEntry({ name: newMitra.name, phone: newMitra.phone, type: newMitra.type })
     const newEntry = {
       name: newMitra.name,
       phone: newMitra.phone,
@@ -163,12 +129,30 @@ function MitraManagement() {
     setShowEditModal(true)
   }
 
-  const openTransaksiModal = (mitra) => {
+  const openTransaksiModal = async (mitra) => {
     setSelectedMitra(mitra)
     setShowTransaksiModal(true)
+    setLoadingTx(true)
+    try {
+      const allTx = await getTransactions()
+      const filtered = allTx
+        .filter((t) => t.partner_name === mitra.name)
+        .map((t) => ({
+          id: t.invoice_number || t.id,
+          fish: t.notes || '-',
+          weight: '-',
+          price: `Rp ${(parseFloat(t.total_amount) || 0).toLocaleString('id-ID')}`,
+          date: t.date || new Date(t.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }),
+          status: t.status === 'Selesai' ? 'Lunas' : t.status === 'Pending' ? 'Hutang' : 'Dibatalkan',
+        }))
+      setMitraTransactions(filtered.reverse())
+    } catch {
+      setMitraTransactions([])
+    }
+    setLoadingTx(false)
   }
 
-  const currentTransaksi = selectedMitra ? (transaksiData[selectedMitra.name] || []) : []
+  const currentTransaksi = mitraTransactions
 
   const generateMitraPDF = (mitra) => {
     const doc = new jsPDF()
@@ -497,7 +481,9 @@ function MitraManagement() {
             </div>
             <p className="font-label-md text-label-md text-on-surface-variant mb-md">Mitra: {selectedMitra?.name}</p>
             <div className="space-y-sm">
-              {currentTransaksi.length === 0 ? (
+              {loadingTx ? (
+                <p className="font-body-md text-body-md text-on-surface-variant text-center py-lg">Memuat transaksi...</p>
+              ) : currentTransaksi.length === 0 ? (
                 <p className="font-body-md text-body-md text-on-surface-variant text-center py-lg">Tidak ada transaksi untuk mitra ini</p>
               ) : (
                 currentTransaksi.map((tx) => (

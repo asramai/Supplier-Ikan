@@ -4,6 +4,7 @@ import autoTable from 'jspdf-autotable'
 import { getVendorList } from '../utils/mitraData'
 import { getIdentity } from '../utils/companyIdentity'
 import { generateInvoiceNumber, getCurrentYear } from '../utils/invoiceCounter'
+import { insertTransaction, insertTransactionItems } from '../services/supabaseService'
 
 function JualForm() {
   const identity = getIdentity()
@@ -152,11 +153,37 @@ function JualForm() {
     doc.save(`Struk-Penjualan-${tx?.vendor || vendor || 'ikan'}-${Date.now()}.pdf`)
   }
 
+  const saveToSupabase = async (txId) => {
+    try {
+      const transaction = {
+        id: txId || formData.invoiceNumber,
+        type: 'jual',
+        invoice_number: txId || formData.invoiceNumber,
+        date: formData.date,
+        partner_name: vendor,
+        partner_type: 'vendor',
+        total_amount: totalPrice,
+        status: paymentStatus === 'paid' ? 'Selesai' : 'Pending',
+        created_at: new Date().toISOString(),
+      }
+      await insertTransaction(transaction)
+      const txItems = items.map((item) => ({
+        transaction_id: txId || formData.invoiceNumber,
+        fish_type: item.fishType,
+        quantity_kg: parseFloat(item.weight) || 0,
+        price_per_kg: parseFloat(item.price) || 0,
+        subtotal: (parseFloat(item.weight) || 0) * (parseFloat(item.price) || 0),
+      }))
+      await insertTransactionItems(txItems)
+    } catch {}
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
     const newErrors = validate()
     setErrors(newErrors)
     if (Object.keys(newErrors).length === 0) {
+      saveToSupabase(formData.invoiceNumber)
       generatePDF()
     }
   }
@@ -197,17 +224,17 @@ function JualForm() {
               </div>
               {touched.vendor && errors.vendor && <p className="text-error font-label-md text-label-md mt-xs">{errors.vendor}</p>}
             </div>
-<div className="grid grid-cols-2 gap-md">
-               <div className="flex flex-col gap-xs">
-                 <label className="font-label-md text-label-md text-on-surface-variant uppercase">Tanggal</label>
-                 <input className={`w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary ${touched.date && errors.date ? 'border-error focus:border-error' : ''}`} type="date" value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} onBlur={() => handleBlur('date')} />
-                 {touched.date && errors.date && <p className="text-error font-label-md text-label-md mt-xs">{errors.date}</p>}
-               </div>
-               <div className="flex flex-col gap-xs">
-                 <label className="font-label-md text-label-md text-on-surface-variant uppercase">No. Invoice</label>
-                 <input className="w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg text-on-surface-variant" type="text" value={formData.invoiceNumber} readOnly />
-               </div>
-             </div>
+            <div className="grid grid-cols-2 gap-md">
+              <div className="flex flex-col gap-xs">
+                <label className="font-label-md text-label-md text-on-surface-variant uppercase">Tanggal</label>
+                <input className={`w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary ${touched.date && errors.date ? 'border-error focus:border-error' : ''}`} type="date" value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} onBlur={() => handleBlur('date')} />
+                {touched.date && errors.date && <p className="text-error font-label-md text-label-md mt-xs">{errors.date}</p>}
+              </div>
+              <div className="flex flex-col gap-xs">
+                <label className="font-label-md text-label-md text-on-surface-variant uppercase">No. Invoice</label>
+                <input className="w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg text-on-surface-variant" type="text" value={formData.invoiceNumber} readOnly />
+              </div>
+            </div>
           </div>
 
           <div className="bg-white border border-outline-variant rounded-xl p-md space-y-md card-hover">

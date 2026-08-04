@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { getMockUsersDB, getCurrentUser } from '../utils/auth'
+import { getUsersDB } from '../services/supabaseService'
+import { getInvestors, upsertInvestor, deleteInvestor } from '../services/supabaseService'
 import { hasRolePermission } from '../utils/roles'
 
 function UserManagement() {
-  const user = getCurrentUser()
-  const role = user?.role || 'Investor'
+  const currentUser = getUsersDB()
+  const currentUserKeys = Object.keys(currentUser)
+  const role = (currentUser[currentUserKeys[0]]?.role) || 'Investor'
 
   const [activeTab, setActiveTab] = useState('pengguna')
   const [showAddFishModal, setShowAddFishModal] = useState(false)
@@ -34,10 +36,10 @@ function UserManagement() {
 
   const [fishTypes, setFishTypes] = useState(['Cakalang', 'Tongkol', 'Tuna Yellowfin', 'Layang', 'Kerapu'])
   const [investors, setInvestors] = useState([
-    { name: 'Siti Yusufina', email: 'siti.y@investor.com' },
-    { name: 'Ahmad Fauzi', email: 'ahmad.f@investor.com' },
-    { name: 'Budi Santoso', email: 'budi.s@investor.com' },
-    { name: 'Rahmat Panua', email: 'rahmat.p@investor.com' },
+    { id: 'inv-1', name: 'Siti Yusufina', email: 'siti.y@investor.com' },
+    { id: 'inv-2', name: 'Ahmad Fauzi', email: 'ahmad.f@investor.com' },
+    { id: 'inv-3', name: 'Budi Santoso', email: 'budi.s@investor.com' },
+    { id: 'inv-4', name: 'Rahmat Panua', email: 'rahmat.p@investor.com' },
   ])
 
   useEffect(() => {
@@ -48,8 +50,9 @@ function UserManagement() {
 
   useEffect(() => {
     const refresh = () => {
-      const db = getMockUsersDB()
+      const db = getUsersDB()
       const refreshed = Object.values(db).map((u) => ({
+        username: u.username,
         name: u.name,
         email: u.email,
         role: u.role,
@@ -70,8 +73,24 @@ function UserManagement() {
     return () => window.removeEventListener('usersUpdated', refresh)
   }, [])
 
+  useEffect(() => {
+    const loadInvestors = async () => {
+      try {
+        const data = await getInvestors()
+        if (data && data.length > 0) {
+          setInvestors(data.map((inv) => ({
+            id: inv.id,
+            name: inv.name,
+            email: inv.email || '',
+          })))
+        }
+      } catch {}
+    }
+    loadInvestors()
+  }, [])
+
   const getInitialUsers = () => {
-    const db = getMockUsersDB()
+    const db = getUsersDB()
     return Object.entries(db).map(([username, u]) => ({
       username,
       name: u.name,
@@ -152,16 +171,7 @@ function UserManagement() {
         )
       )
       if (selectedUser.username) {
-        const db = getMockUsersDB()
-        const dbUser = db[selectedUser.username]
-        if (dbUser) {
-          dbUser.name = editUser.name
-          dbUser.email = editUser.email
-          dbUser.role = editUser.role
-          dbUser.phone = editUser.phone
-          dbUser.avatar = editPreviewAvatar || editUser.avatar || ''
-          window.dispatchEvent(new CustomEvent('usersUpdated'))
-        }
+        window.dispatchEvent(new CustomEvent('usersUpdated'))
       }
     }
     setShowEditModal(false)
@@ -189,12 +199,7 @@ function UserManagement() {
         if (u.name === userName) {
           const newStatus = u.status === 'Aktif' ? 'Non-aktif' : 'Aktif'
           if (u.username) {
-            const db = getMockUsersDB()
-            const dbUser = db[u.username]
-            if (dbUser) {
-              dbUser.isActive = newStatus === 'Aktif'
-              window.dispatchEvent(new CustomEvent('usersUpdated'))
-            }
+            window.dispatchEvent(new CustomEvent('usersUpdated'))
           }
           return {
             ...u,
@@ -376,7 +381,7 @@ function UserManagement() {
           </div>
           <div className="space-y-2">
             {investors.map((inv, index) => (
-              <div key={inv.name} className="flex items-center justify-between p-4 bg-surface border border-outline-variant rounded-xl card-hover animate-slide-up" style={{ animationFillMode: 'backwards', animationDelay: `${index * 0.05}s` }}>
+              <div key={inv.id || inv.name} className="flex items-center justify-between p-4 bg-surface border border-outline-variant rounded-xl card-hover animate-slide-up" style={{ animationFillMode: 'backwards', animationDelay: `${index * 0.05}s` }}>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-headline-sm">
                     {inv.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
@@ -654,7 +659,7 @@ function UserManagement() {
         </div>
       )}
 
-{showAddInvestorModal && (
+      {showAddInvestorModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-md" onClick={() => setShowAddInvestorModal(false)}>
           <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-lg">
@@ -718,9 +723,14 @@ function UserManagement() {
               </div>
               <button
                 className="w-full bg-primary-container text-on-primary-container py-md rounded-xl font-headline-md text-headline-md font-bold active:scale-[0.98] transition-transform"
-                onClick={() => {
+                onClick={async () => {
                   if (newInvestor.name.trim() && newInvestor.email.trim()) {
-                    setInvestors((prev) => [...prev, { name: newInvestor.name.trim(), email: newInvestor.email.trim(), avatar: newInvestor.avatar || '' }])
+                    try {
+                      const saved = await upsertInvestor({ id: `inv-${Date.now()}`, name: newInvestor.name.trim(), email: newInvestor.email.trim(), avatar: newInvestor.avatar || '' })
+                      setInvestors((prev) => [...prev, { id: saved.id || `inv-${Date.now()}`, name: newInvestor.name.trim(), email: newInvestor.email.trim(), avatar: newInvestor.avatar || '' }])
+                    } catch {
+                      setInvestors((prev) => [...prev, { id: `inv-${Date.now()}`, name: newInvestor.name.trim(), email: newInvestor.email.trim(), avatar: newInvestor.avatar || '' }])
+                    }
                     setNewInvestor({ name: '', email: '', avatar: '' })
                     setNewInvestorPreview('')
                     setShowAddInvestorModal(false)
@@ -734,150 +744,160 @@ function UserManagement() {
         </div>
       )}
 
-       {showEditFishModal && (
-         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-md" onClick={() => setShowEditFishModal(false)}>
-           <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
-             <div className="flex justify-between items-center mb-lg">
-               <h3 className="font-headline-md text-headline-md text-on-surface">Edit Jenis Ikan</h3>
-               <button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" onClick={() => setShowEditFishModal(false)}>close</button>
-             </div>
-             <div className="space-y-md">
-               <div className="flex flex-col gap-xs">
-                 <label className="font-label-md text-label-md text-on-surface-variant uppercase">Nama Ikan</label>
-                 <input
-                   className="w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none"
-                   type="text"
-                   value={editingFish}
-                   onChange={(e) => setEditingFish(e.target.value)}
-                 />
-               </div>
-               <button
-                 className="w-full bg-primary-container text-on-primary-container py-md rounded-xl font-headline-md text-headline-md font-bold active:scale-[0.98] transition-transform"
-                 onClick={() => {
-                   if (editingFish.trim()) {
-                     setFishTypes((prev) => prev.map((f) => f === selectedFish ? editingFish.trim() : f))
-                     setShowEditFishModal(false)
-                     setEditingFish('')
-                     setSelectedFish('')
-                   }
-                 }}
-               >
-                 Simpan
-               </button>
-             </div>
-           </div>
-         </div>
-       )}
-
-       {showDeleteFishModal && (
-         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-md" onClick={() => setShowDeleteFishModal(false)}>
-           <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
-             <div className="flex justify-between items-center mb-lg">
-               <h3 className="font-headline-md text-headline-md text-on-surface">Hapus Jenis Ikan</h3>
-               <button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" onClick={() => setShowDeleteFishModal(false)}>close</button>
-             </div>
-             <p className="font-body-md text-body-md text-on-surface-variant mb-lg">Apakah Anda yakin ingin menghapus jenis ikan <strong>{selectedFish}</strong>?</p>
-             <div className="flex gap-sm">
-               <button
-                 className="flex-1 py-md rounded-xl font-label-md border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors"
-                 onClick={() => setShowDeleteFishModal(false)}
-               >
-                 Batal
-               </button>
-               <button
-                 className="flex-1 py-md rounded-xl font-label-md bg-error text-on-error hover:opacity-90 transition-opacity"
-                 onClick={() => {
-                   setFishTypes((prev) => prev.filter((f) => f !== selectedFish))
-                   setShowDeleteFishModal(false)
-                   setSelectedFish('')
-                 }}
-               >
-                 Hapus
-               </button>
-             </div>
-</div>
-          </div>
-        )}
-
-        {showEditInvestorModal && (
-          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-md" onClick={() => setShowEditInvestorModal(false)}>
-            <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
-              <div className="flex justify-between items-center mb-lg">
-                <h3 className="font-headline-md text-headline-md text-on-surface">Edit Investor</h3>
-                <button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" onClick={() => setShowEditInvestorModal(false)}>close</button>
+      {showEditFishModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-md" onClick={() => setShowEditFishModal(false)}>
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-lg">
+              <h3 className="font-headline-md text-headline-md text-on-surface">Edit Jenis Ikan</h3>
+              <button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" onClick={() => setShowEditFishModal(false)}>close</button>
+            </div>
+            <div className="space-y-md">
+              <div className="flex flex-col gap-xs">
+                <label className="font-label-md text-label-md text-on-surface-variant uppercase">Nama Ikan</label>
+                <input
+                  className="w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                  type="text"
+                  value={editingFish}
+                  onChange={(e) => setEditingFish(e.target.value)}
+                />
               </div>
-              <div className="space-y-md">
-                <div className="flex flex-col gap-xs">
-                  <label className="font-label-md text-label-md text-on-surface-variant uppercase">Nama Lengkap</label>
-                  <input
-                    className="w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none"
-                    type="text"
-                    value={editingInvestor.name}
-                    onChange={(e) => setEditingInvestor({ ...editingInvestor, name: e.target.value })}
-                  />
-                </div>
-                <div className="flex flex-col gap-xs">
-                  <label className="font-label-md text-label-md text-on-surface-variant uppercase">Email</label>
-                  <input
-                    className="w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none"
-                    type="email"
-                    value={editingInvestor.email}
-                    onChange={(e) => setEditingInvestor({ ...editingInvestor, email: e.target.value })}
-                  />
-                </div>
-                <button
-                  className="w-full bg-primary-container text-on-primary-container py-md rounded-xl font-headline-md text-headline-md font-bold active:scale-[0.98] transition-transform"
-                  onClick={() => {
-                    if (editingInvestor.name.trim() && editingInvestor.email.trim()) {
+              <button
+                className="w-full bg-primary-container text-on-primary-container py-md rounded-xl font-headline-md text-headline-md font-bold active:scale-[0.98] transition-transform"
+                onClick={() => {
+                  if (editingFish.trim()) {
+                    setFishTypes((prev) => prev.map((f) => f === selectedFish ? editingFish.trim() : f))
+                    setShowEditFishModal(false)
+                    setEditingFish('')
+                    setSelectedFish('')
+                  }
+                }}
+              >
+                Simpan
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showDeleteFishModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-md" onClick={() => setShowDeleteFishModal(false)}>
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-lg">
+              <h3 className="font-headline-md text-headline-md text-on-surface">Hapus Jenis Ikan</h3>
+              <button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" onClick={() => setShowDeleteFishModal(false)}>close</button>
+            </div>
+            <p className="font-body-md text-body-md text-on-surface-variant mb-lg">Apakah Anda yakin ingin menghapus jenis ikan <strong>{selectedFish}</strong>?</p>
+            <div className="flex gap-sm">
+              <button
+                className="flex-1 py-md rounded-xl font-label-md border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors"
+                onClick={() => setShowDeleteFishModal(false)}
+              >
+                Batal
+              </button>
+              <button
+                className="flex-1 py-md rounded-xl font-label-md bg-error text-on-error hover:opacity-90 transition-opacity"
+                onClick={() => {
+                  setFishTypes((prev) => prev.filter((f) => f !== selectedFish))
+                  setShowDeleteFishModal(false)
+                  setSelectedFish('')
+                }}
+              >
+                Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showEditInvestorModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-md" onClick={() => setShowEditInvestorModal(false)}>
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-lg">
+              <h3 className="font-headline-md text-headline-md text-on-surface">Edit Investor</h3>
+              <button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" onClick={() => setShowEditInvestorModal(false)}>close</button>
+            </div>
+            <div className="space-y-md">
+              <div className="flex flex-col gap-xs">
+                <label className="font-label-md text-label-md text-on-surface-variant uppercase">Nama Lengkap</label>
+                <input
+                  className="w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                  type="text"
+                  value={editingInvestor.name}
+                  onChange={(e) => setEditingInvestor({ ...editingInvestor, name: e.target.value })}
+                />
+              </div>
+              <div className="flex flex-col gap-xs">
+                <label className="font-label-md text-label-md text-on-surface-variant uppercase">Email</label>
+                <input
+                  className="w-full bg-surface border border-outline-variant rounded-lg p-md font-body-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                  type="email"
+                  value={editingInvestor.email}
+                  onChange={(e) => setEditingInvestor({ ...editingInvestor, email: e.target.value })}
+                />
+              </div>
+              <button
+                className="w-full bg-primary-container text-on-primary-container py-md rounded-xl font-headline-md text-headline-md font-bold active:scale-[0.98] transition-transform"
+                onClick={async () => {
+                  if (editingInvestor.name.trim() && editingInvestor.email.trim()) {
+                    if (selectedInvestor) {
+                      try {
+                        await upsertInvestor({ id: selectedInvestor.id, name: editingInvestor.name.trim(), email: editingInvestor.email.trim() })
+                      } catch {}
                       setInvestors((prev) => prev.map((inv) =>
-                        inv.name === selectedInvestor.name
+                        inv.id === selectedInvestor.id
                           ? { ...inv, name: editingInvestor.name.trim(), email: editingInvestor.email.trim() }
                           : inv
                       ))
-                      setShowEditInvestorModal(false)
-                      setEditingInvestor({ name: '', email: '' })
-                      setSelectedInvestor(null)
                     }
-                  }}
-                >
-                  Simpan
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {showDeleteInvestorModal && (
-          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-md" onClick={() => setShowDeleteInvestorModal(false)}>
-            <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
-              <div className="flex justify-between items-center mb-lg">
-                <h3 className="font-headline-md text-headline-md text-on-surface">Hapus Investor</h3>
-                <button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" onClick={() => setShowDeleteInvestorModal(false)}>close</button>
-              </div>
-              <p className="font-body-md text-body-md text-on-surface-variant mb-lg">Apakah Anda yakin ingin menghapus investor <strong>{selectedInvestor?.name}</strong>?</p>
-              <div className="flex gap-sm">
-                <button
-                  className="flex-1 py-md rounded-xl font-label-md border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors"
-                  onClick={() => setShowDeleteInvestorModal(false)}
-                >
-                  Batal
-                </button>
-                <button
-                  className="flex-1 py-md rounded-xl font-label-md bg-error text-on-error hover:opacity-90 transition-opacity"
-                  onClick={() => {
-                    setInvestors((prev) => prev.filter((inv) => inv.name !== selectedInvestor.name))
-                    setShowDeleteInvestorModal(false)
+                    setShowEditInvestorModal(false)
+                    setEditingInvestor({ name: '', email: '' })
                     setSelectedInvestor(null)
-                  }}
-                >
-                  Hapus
-                </button>
-              </div>
+                  }
+                }}
+              >
+                Simpan
+              </button>
             </div>
           </div>
-        )}
-      </div>
-    )
-  }
+        </div>
+      )}
 
-  export default UserManagement
+      {showDeleteInvestorModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-md" onClick={() => setShowDeleteInvestorModal(false)}>
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-lg">
+              <h3 className="font-headline-md text-headline-md text-on-surface">Hapus Investor</h3>
+              <button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" onClick={() => setShowDeleteInvestorModal(false)}>close</button>
+            </div>
+            <p className="font-body-md text-body-md text-on-surface-variant mb-lg">Apakah Anda yakin ingin menghapus investor <strong>{selectedInvestor?.name}</strong>?</p>
+            <div className="flex gap-sm">
+              <button
+                className="flex-1 py-md rounded-xl font-label-md border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors"
+                onClick={() => setShowDeleteInvestorModal(false)}
+              >
+                Batal
+              </button>
+              <button
+                className="flex-1 py-md rounded-xl font-label-md bg-error text-on-error hover:opacity-90 transition-opacity"
+                onClick={async () => {
+                  if (selectedInvestor) {
+                    try {
+                      await deleteInvestor(selectedInvestor.id)
+                    } catch {}
+                    setInvestors((prev) => prev.filter((inv) => inv.id !== selectedInvestor.id))
+                  }
+                  setShowDeleteInvestorModal(false)
+                  setSelectedInvestor(null)
+                }}
+              >
+                Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default UserManagement

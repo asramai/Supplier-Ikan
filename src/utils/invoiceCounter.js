@@ -1,27 +1,48 @@
+import { getInvoiceCounter, upsertInvoiceCounter } from '../services/supabaseService'
+
 const STORAGE_KEY = 'asy_syifa_invoice'
 
 function getCurrentYear() {
   return new Date().getFullYear()
 }
 
-function getStoredCounters() {
+function getLocalCounter(type) {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return null
-    const data = JSON.parse(raw)
-    if (data.year !== getCurrentYear()) return null
-    return data
-  } catch {
-    return null
-  }
+    if (raw) {
+      const data = JSON.parse(raw)
+      if (data.year === getCurrentYear()) {
+        return data[type] || 0
+      }
+    }
+  } catch {}
+  return null
+}
+
+function setLocalCounter(type, value) {
+  const year = getCurrentYear()
+  let data = { year, beli: 0, jual: 0 }
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (raw) {
+      const parsed = JSON.parse(raw)
+      if (parsed.year === year) data = parsed
+    }
+  } catch {}
+  data[type] = value
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
 }
 
 function getNextNumber(type) {
-  const counters = getStoredCounters() || { year: getCurrentYear(), beli: 0, jual: 0 }
-  counters.year = getCurrentYear()
-  counters[type] = (counters[type] || 0) + 1
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(counters))
-  return counters[type]
+  let number = getLocalCounter(type)
+  if (number === null) {
+    const year = getCurrentYear()
+    number = 0
+  }
+  number = number + 1
+  setLocalCounter(type, number)
+  upsertInvoiceCounter(type, getCurrentYear(), number).catch(() => {})
+  return number
 }
 
 function generateInvoiceNumber(type) {
@@ -33,6 +54,8 @@ function generateInvoiceNumber(type) {
 
 function resetInvoiceCounters() {
   localStorage.removeItem(STORAGE_KEY)
+  upsertInvoiceCounter('beli', getCurrentYear(), 0).catch(() => {})
+  upsertInvoiceCounter('jual', getCurrentYear(), 0).catch(() => {})
 }
 
 export { generateInvoiceNumber, resetInvoiceCounters, getCurrentYear }

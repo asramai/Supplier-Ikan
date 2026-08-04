@@ -1,8 +1,32 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { getTransactions } from '../services/supabaseService'
 
 function LaporanLabaRugi() {
   const [filterYear, setFilterYear] = useState('2025')
   const [filterMonth, setFilterMonth] = useState('Semua')
+  const [transactions, setTransactions] = useState([])
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    const loadTransactions = async () => {
+      setLoading(true)
+      try {
+        const data = await getTransactions()
+        if (data && data.length > 0) {
+          setTransactions(data.map((tx) => ({
+            id: tx.id,
+            name: tx.fisherman || tx.vendor || '-',
+            date: tx.date || new Date(tx.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
+            status: tx.status || 'LUNAS',
+            type: tx.type,
+            total: tx.total_price || 0,
+          })))
+        }
+      } catch {}
+      setLoading(false)
+    }
+    loadTransactions()
+  }, [])
 
   const expenseItems = [
     { category: 'Bahan Bakar (BBM)', sub: 'Solar Industri', value: 'Rp 5.200k' },
@@ -11,7 +35,10 @@ function LaporanLabaRugi() {
     { category: 'Lain-lain', sub: 'Administrasi', value: 'Rp 1.350k' },
   ]
 
-  const transactions = [
+  const filteredTransactions = transactions.length > 0 ? transactions.filter((tx) => {
+    if (filterMonth === 'Semua') return true
+    return tx.date.includes(filterMonth) || tx.date.includes(filterYear)
+  }) : [
     { name: 'Kapal Bahari 01', date: '12 Aug, 2023', status: 'LUNAS', icon: 'inventory_2', statusBg: 'bg-[#E8F5E9]', statusText: 'text-[#28A745]', iconBg: 'bg-primary-container', iconColor: 'text-on-primary-container' },
     { name: 'Logistik Es', date: '11 Aug, 2023', status: 'HUTANG', icon: 'shipping', statusBg: 'bg-[#FDEDEC]', statusText: 'text-[#DC3545]', iconBg: 'bg-surface-container-high', iconColor: 'text-on-surface-variant' },
   ]
@@ -28,8 +55,6 @@ function LaporanLabaRugi() {
 
   const filteredExpenseItems = filterMonth === 'Semua' ? expenseItems : expenseItems.filter((item) => item.category.includes(filterMonth) || item.sub.includes(filterMonth))
 
-  const filteredTransactions = filterMonth === 'Semua' ? transactions : transactions.filter((tx) => tx.date.includes(filterMonth) || tx.date.includes(filterYear))
-
   const totalPendapatan = 'Rp 45.2M'
   const totalPengeluaran = 'Rp 12.8M'
   const totalLaba = 'Rp 32.400.000'
@@ -42,6 +67,7 @@ function LaporanLabaRugi() {
             <h2 className="font-headline-lg text-headline-lg text-on-surface">Laporan Laba Rugi</h2>
             <p className="font-body-md text-body-md text-on-surface-variant">Periode Operasional Perikanan</p>
           </div>
+          {loading && <span className="font-label-md text-label-md text-primary">Memuat...</span>}
         </div>
       </section>
 
@@ -155,17 +181,17 @@ function LaporanLabaRugi() {
         </div>
         <div className="space-y-sm">
           {filteredTransactions.map((tx) => (
-            <div key={tx.name} className="flex justify-between items-center p-md bg-surface border border-outline-variant rounded-lg">
+            <div key={tx.id || tx.name} className="flex justify-between items-center p-md bg-surface border border-outline-variant rounded-lg">
               <div className="flex items-center gap-md">
-                <div className={`${tx.iconBg} ${tx.iconColor} p-sm rounded-lg`}>
-                  <span className="material-symbols-outlined">{tx.icon}</span>
+                <div className={`${tx.iconBg || 'bg-surface-container-high'} ${tx.iconColor || 'text-on-surface-variant'} p-sm rounded-lg`}>
+                  <span className="material-symbols-outlined">{tx.icon || 'receipt'}</span>
                 </div>
                 <div>
                   <p className="font-body-lg text-body-lg">{tx.name}</p>
                   <p className="font-label-md text-label-md text-on-surface-variant">{tx.date}</p>
                 </div>
               </div>
-              <div className={`px-sm py-xs ${tx.statusBg} ${tx.statusText} font-label-md text-label-md rounded-full uppercase`}>{tx.status}</div>
+              <div className={`px-sm py-xs ${tx.statusBg || 'bg-surface-container-low'} ${tx.statusText || 'text-on-surface-variant'} font-label-md text-label-md rounded-full uppercase`}>{tx.status}</div>
             </div>
           ))}
         </div>

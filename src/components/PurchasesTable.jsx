@@ -1,15 +1,30 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { getTransactions } from '../services/supabaseService'
 
 function PurchasesTable() {
-  const purchases = [
-    { fisherman: 'Budi Santoso', time: '24 Oct, 08:30', fish: 'Yellowfin Tuna', weight: '45.5 kg', total: 'Rp 4.5M' },
-    { fisherman: 'Andi Wijaya', time: '24 Oct, 09:15', fish: 'Skipjack', weight: '120.0 kg', total: 'Rp 8.2M' },
-    { fisherman: 'Surya Pratama', time: '23 Oct, 16:45', fish: 'Mackerel', weight: '28.2 kg', total: 'Rp 1.8M' },
-    { fisherman: 'Herman Ali', time: '23 Oct, 14:20', fish: 'Grouper', weight: '15.5 kg', total: 'Rp 3.1M' },
-  ]
-
+  const [purchases, setPurchases] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
   const [filterFish, setFilterFish] = useState('Semua')
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await getTransactions('beli')
+        const mapped = data.map((t) => ({
+          fisherman: t.partner_name,
+          time: new Date(t.date || t.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }),
+          fish: t.notes || '-',
+          weight: '-',
+          total: `Rp ${(parseFloat(t.total_amount) || 0).toLocaleString('id-ID')}`,
+          id: t.id,
+        }))
+        setPurchases(mapped.reverse())
+      } catch {}
+      setLoading(false)
+    }
+    load()
+  }, [])
 
   const fishTypes = ['Semua', ...new Set(purchases.map((p) => p.fish))]
 
@@ -58,13 +73,17 @@ function PurchasesTable() {
               </tr>
             </thead>
             <tbody className="divide-y divide-outline-variant/30">
-              {filtered.length === 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan={4} className="px-md py-8 text-center font-body-md text-body-md text-on-surface-variant">Memuat data...</td>
+                </tr>
+              ) : filtered.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="px-md py-8 text-center font-body-md text-body-md text-on-surface-variant">Tidak ada data ditemukan</td>
                 </tr>
               ) : (
                 filtered.map((row, index) => (
-                  <tr key={index} className={index % 2 === 0 ? 'zebra-row' : ''}>
+                  <tr key={row.id || index} className={index % 2 === 0 ? 'zebra-row' : ''}>
                     <td className="px-md py-4">
                       <div className="flex flex-col">
                         <span className="font-body-md text-body-md font-bold text-on-surface">{row.fisherman}</span>

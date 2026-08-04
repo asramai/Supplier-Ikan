@@ -35,7 +35,7 @@ function FAB() {
       if (hasRolePermission(role, 'manageUsers')) return { to: '/users', icon: 'person_add', label: 'Tambah Pengguna', color: 'bg-primary', action: 'openAddUser' }
       return null
     }
-    if (path === '/inventory') return { to: '/inventory', icon: 'add', label: 'Tambah Ikan', color: 'bg-primary', action: null }
+    if (path === '/inventory') return { to: '/inventory', icon: 'add', label: 'Tambah Ikan', color: 'bg-primary', action: 'openAddInventory' }
     if (path === '/invest') {
       if (hasRolePermission(role, 'invest')) return { to: '/invest', icon: 'trending_up', label: 'Tambah Investasi', color: 'bg-primary', action: null }
       return null
@@ -56,6 +56,10 @@ function FAB() {
     if (config.action === 'openAddUser') {
       e.preventDefault()
       window.dispatchEvent(new CustomEvent('openAddUser'))
+    }
+    if (config.action === 'openAddInventory') {
+      e.preventDefault()
+      window.dispatchEvent(new CustomEvent('openAddInventory'))
     }
   }
 

@@ -1,16 +1,40 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { getFishTypes, upsertFishType, deleteFishType } from '../services/supabaseService'
+
+const defaultFishData = [
+  { name: 'Kerapu Sunu', id: 'FR-001', grade: 'A', gradeBg: 'bg-tertiary-container/10', gradeText: 'text-tertiary', price: 'Rp 125.000', stock: '450', stockColor: '' },
+  { name: 'Tongkol Abu-abu', id: 'FR-002', grade: 'B', gradeBg: 'bg-outline-variant/30', gradeText: 'text-on-surface-variant', price: 'Rp 32.500', stock: '1.200', stockColor: '' },
+  { name: 'Tuna Yellowfin', id: 'FR-003', grade: 'A', gradeBg: 'bg-tertiary-container/10', gradeText: 'text-tertiary', price: 'Rp 85.000', stock: '12', stockColor: 'text-error' },
+  { name: 'Kakap Merah', id: 'FR-004', grade: 'C', gradeBg: 'bg-error-container/20', gradeText: 'text-error', price: 'Rp 55.000', stock: '340', stockColor: '' },
+  { name: 'Cakalang', id: 'FR-005', grade: 'B', gradeBg: 'bg-outline-variant/30', gradeText: 'text-on-surface-variant', price: 'Rp 28.000', stock: '2.150', stockColor: '' },
+]
 
 function FishData() {
   const [searchTerm, setSearchTerm] = useState('')
   const [quickFilter, setQuickFilter] = useState('Semua')
+  const [fishData, setFishData] = useState(defaultFishData)
 
-  const fishData = [
-    { name: 'Kerapu Sunu', id: 'FR-001', grade: 'A', gradeBg: 'bg-tertiary-container/10', gradeText: 'text-tertiary', price: 'Rp 125.000', stock: '450', stockColor: '' },
-    { name: 'Tongkol Abu-abu', id: 'FR-002', grade: 'B', gradeBg: 'bg-outline-variant/30', gradeText: 'text-on-surface-variant', price: 'Rp 32.500', stock: '1.200', stockColor: '' },
-    { name: 'Tuna Yellowfin', id: 'FR-003', grade: 'A', gradeBg: 'bg-tertiary-container/10', gradeText: 'text-tertiary', price: 'Rp 85.000', stock: '12', stockColor: 'text-error' },
-    { name: 'Kakap Merah', id: 'FR-004', grade: 'C', gradeBg: 'bg-error-container/20', gradeText: 'text-error', price: 'Rp 55.000', stock: '340', stockColor: '' },
-    { name: 'Cakalang', id: 'FR-005', grade: 'B', gradeBg: 'bg-outline-variant/30', gradeText: 'text-on-surface-variant', price: 'Rp 28.000', stock: '2.150', stockColor: '' },
-  ]
+  useEffect(() => {
+    const loadFishTypes = async () => {
+      try {
+        const types = await getFishTypes()
+        if (types && types.length > 0) {
+          const mapped = types.map((t, i) => ({
+            name: t.name,
+            id: `FR-${String(i + 1).padStart(3, '0')}`,
+            grade: t.grade || 'A',
+            gradeBg: t.grade === 'A' ? 'bg-tertiary-container/10' : t.grade === 'B' ? 'bg-outline-variant/30' : 'bg-error-container/20',
+            gradeText: t.grade === 'A' ? 'text-tertiary' : t.grade === 'B' ? 'text-on-surface-variant' : 'text-error',
+            price: t.price || 'Rp 0',
+            stock: t.stock || '0',
+            stockColor: t.stock && parseInt(t.stock.replace(/\./g, ''), 10) <= 100 ? 'text-error' : '',
+          }))
+          setFishData(mapped)
+        }
+      } catch {}
+    }
+    loadFishTypes()
+  }, [])
 
   const parsePrice = (priceStr) => {
     const num = parseInt(priceStr.replace(/[^\d]/g, ''), 10)
@@ -60,7 +84,7 @@ function FishData() {
     <div className="px-margin-mobile pt-lg animate-fade-in">
       <div className="mb-lg">
         <h2 className="font-headline-lg text-headline-lg text-on-surface mb-xs">Daftar Jenis Ikan</h2>
-        <p className="font-body-md text-on-surface-variant">Kelola master data komoditas perikanan Anda.</p>
+        <p className="font-body-md text-body-md text-on-surface-variant">Kelola master data komoditas perikanan Anda.</p>
       </div>
 
       <div className="relative mb-lg">

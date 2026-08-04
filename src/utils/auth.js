@@ -1,49 +1,10 @@
 import { getPermissions } from './roles'
+import { getProfile, upsertProfile, getProfiles, signInWithPassword } from '../services/supabaseService'
 
-const STORAGE_KEY = 'asy_syifa_auth'
+const SUPABASE_STORAGE_KEY = 'asy_syifa_auth'
+const LEGACY_STORAGE_KEY = 'asy_syifa_auth'
 
-async function hashPassword(password) {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(password + 'asy-syifa-panua-salt-2024')
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
-}
-
-function generateMockToken(user) {
-  const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }))
-  const payload = btoa(JSON.stringify({
-    sub: user.username,
-    role: user.role,
-    iat: Date.now(),
-    exp: Date.now() + 8 * 60 * 60 * 1000,
-  }))
-  const signature = btoa('mock-signature-' + user.username)
-  return `${header}.${payload}.${signature}`
-}
-
-function decodeToken(token) {
-  try {
-    const payload = token.split('.')[1]
-    return JSON.parse(atob(payload))
-  } catch {
-    return null
-  }
-}
-
-function verifyTokenIntegrity(token) {
-  const parts = token.split('.')
-  if (parts.length !== 3) return false
-  try {
-    const payload = JSON.parse(atob(parts[1]))
-    const expectedSig = btoa('mock-signature-' + payload.sub)
-    return parts[2] === expectedSig
-  } catch {
-    return false
-  }
-}
-
-const mockUsersDB = {
+const defaultMockUsersDB = {
   admin: {
     username: 'admin',
     passwordHash: 'a80cb5d9efbeedafc85c83b2d231d865f71404058ee2a0b4f7cd6fa5cb27abb7',
@@ -90,15 +51,108 @@ const mockUsersDB = {
   },
 }
 
-export function login(username, password) {
-  return new Promise(async (resolve, reject) => {
-    setTimeout(async () => {
-      if (!username || !password) {
-        reject(new Error('Username dan password wajib diisi'))
-        return
-      }
+async function hashPassword(password) {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(password + 'asy-syifa-panua-salt-2024')
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
+}
 
-      const user = mockUsersDB[username]
+function generateMockToken(user) {
+  const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }))
+  const payload = btoa(JSON.stringify({
+    sub: user.username,
+    role: user.role,
+    iat: Date.now(),
+    exp: Date.now() + 8 * 60 * 60 * 1000,
+  }))
+  const signature = btoa('mock-signature-' + user.username)
+  return `${header}.${payload}.${signature}`
+}
+
+function decodeToken(token) {
+  try {
+    const payload = token.split('.')[1]
+    return JSON.parse(atob(payload))
+  } catch {
+    return null
+  }
+}
+
+function verifyTokenIntegrity(token) {
+  const parts = token.split('.')
+  if (parts.length !== 3) return false
+  try {
+    const payload = JSON.parse(atob(parts[1]))
+    const expectedSig = btoa('mock-signature-' + payload.sub)
+    return parts[2] === expectedSig
+  } catch {
+    return false
+  }
+}
+
+let mockUsersDBCache = null
+
+function loadMockUsersDB() {
+  if (mockUsersDBCache) return mockUsersDBCache
+  mockUsersDBCache = { ...defaultMockUsersDB }
+  return mockUsersDBCache
+}
+
+function clearMockUsersDBCache() {
+  mockUsersDBCache = null
+}
+
+async function trySupabaseLogin(username, password) {
+  try {
+    const result = await signInWithPassword({ email: username, password })
+    if (result?.data?.user) {
+      const profile = await getProfile(username)
+      if (profile) {
+        const permissions = getPermissions(profile.role || 'Operator')
+        return {
+          token: result.data.session?.access_token || generateMockToken(profile),
+          user: {
+            username: profile.username,
+            role: profile.role,
+            name: profile.name,
+            email: profile.email,
+            phone: profile.phone || '',
+            address: profile.address || '',
+            isActive: profile.is_active !== false,
+            avatar: profile.avatar || '',
+            permissions,
+          },
+          expiresAt: result.data.session?.expires_at ? result.data.session.expires_at * 1000 : Date.now() + 8 * 60 * 60 * 1000,
+        }
+      }
+    }
+  } catch {
+    return null
+  }
+  return null
+}
+
+export async function login(username, password) {
+  return new Promise(async (resolve, reject) => {
+    if (!username || !password) {
+      reject(new Error('Username dan password wajib diisi'))
+      return
+    }
+
+    const supabaseSession = await trySupabaseLogin(username, password)
+    if (supabaseSession) {
+      localStorage.setItem(SUPABASE_STORAGE_KEY, JSON.stringify(supabaseSession))
+      resolve(supabaseSession)
+      return
+    }
+
+    setTimeout(async () => {
+      const db = loadMockUsersDB()
+      const userKey = Object.keys(db).find((k) => k === username) || Object.values(db).find((u) => u.email === username)
+
+      const user = db[userKey] || db[username]
 
       if (!user) {
         reject(new Error('Username atau password salah'))
@@ -136,34 +190,45 @@ export function login(username, password) {
         tokenHash: await hashPassword(token),
       }
 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(session))
+      localStorage.setItem(LEGACY_STORAGE_KEY, JSON.stringify(session))
       resolve(session)
-    }, 800)
+    }, 300)
   })
 }
 
 export function logout() {
-  localStorage.removeItem(STORAGE_KEY)
+  localStorage.removeItem(SUPABASE_STORAGE_KEY)
+  localStorage.removeItem(LEGACY_STORAGE_KEY)
+  clearMockUsersDBCache()
 }
 
 export function getSession() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return null
-
-    const session = JSON.parse(raw)
-
-    if (Date.now() > session.expiresAt) {
-      localStorage.removeItem(STORAGE_KEY)
-      return null
+    const raw = localStorage.getItem(SUPABASE_STORAGE_KEY)
+    if (raw) {
+      const session = JSON.parse(raw)
+      if (session.expiresAt && Date.now() > session.expiresAt) {
+        localStorage.removeItem(SUPABASE_STORAGE_KEY)
+        return null
+      }
+      return session
     }
-
-    if (!verifyTokenIntegrity(session.token)) {
-      localStorage.removeItem(STORAGE_KEY)
-      return null
+    const legacyRaw = localStorage.getItem(LEGACY_STORAGE_KEY)
+    if (legacyRaw) {
+      const session = JSON.parse(legacyRaw)
+      if (Date.now() > session.expiresAt) {
+        localStorage.removeItem(LEGACY_STORAGE_KEY)
+        localStorage.removeItem(LEGACY_STORAGE_KEY)
+        return null
+      }
+      if (!verifyTokenIntegrity(session.token)) {
+        localStorage.removeItem(SUPABASE_STORAGE_KEY)
+        localStorage.removeItem(LEGACY_STORAGE_KEY)
+        return null
+      }
+      return session
     }
-
-    return session
+    return null
   } catch {
     return null
   }
@@ -196,14 +261,25 @@ export function hasPermission(permission) {
   return user.permissions[permission] === true
 }
 
-export function updateProfile(updatedData) {
+export async function updateProfile(updatedData) {
   const session = getSession()
   if (!session) return false
 
-  const user = mockUsersDB[session.user.username]
-  if (!user) return false
+  const username = session.user.username
 
-  Object.assign(user, updatedData)
+  try {
+    await upsertProfile({ username, ...updatedData })
+  } catch {
+    const db = getMockUsersDB()
+    const user = db[username]
+    if (user) {
+      Object.assign(user, updatedData)
+    }
+  }
+
+  const db = loadMockUsersDB()
+  const user = db[username]
+  if (!user) return false
 
   const permissions = getPermissions(user.role)
   session.user = {
@@ -218,20 +294,39 @@ export function updateProfile(updatedData) {
     permissions,
   }
 
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(session))
+  localStorage.setItem(SUPABASE_STORAGE_KEY, JSON.stringify(session))
+  localStorage.setItem(LEGACY_STORAGE_KEY, JSON.stringify(session))
   window.dispatchEvent(new CustomEvent('usersUpdated'))
+  clearMockUsersDBCache()
   return true
 }
 
-export function toggleUserStatus(username) {
-  const user = mockUsersDB[username]
+export async function toggleUserStatus(username) {
+  try {
+    const profiles = await getProfiles()
+    const profile = profiles.find((p) => p.username === username)
+    if (profile) {
+      const newStatus = !profile.is_active
+      await upsertProfile({ ...profile, is_active: newStatus })
+      return newStatus
+    }
+  } catch {
+    const db = loadMockUsersDB()
+    const user = db[username]
+    if (!user) return false
+    user.isActive = !user.isActive
+    return user.isActive
+  }
+
+  const db = loadMockUsersDB()
+  const user = db[username]
   if (!user) return false
   user.isActive = !user.isActive
   return user.isActive
 }
 
 export function getMockUsersDB() {
-  return mockUsersDB
+  return loadMockUsersDB()
 }
 
 export function forgotPassword(email) {
@@ -242,7 +337,7 @@ export function forgotPassword(email) {
         return
       }
 
-      const foundUser = Object.values(mockUsersDB).find(
+      const foundUser = Object.values(loadMockUsersDB()).find(
         (u) => u.email.toLowerCase() === email.toLowerCase()
       )
 

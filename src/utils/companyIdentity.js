@@ -1,3 +1,5 @@
+import { getCompanyIdentity, upsertCompanyIdentity } from '../services/supabaseService'
+
 const STORAGE_KEY = 'asy_syifa_identity'
 
 const defaultIdentity = {
@@ -9,24 +11,37 @@ const defaultIdentity = {
   logo: '',
 }
 
-export function getIdentity() {
+let cachedIdentity = null
+
+function loadCached() {
+  if (cachedIdentity) return cachedIdentity
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    if (raw) return { ...defaultIdentity, ...JSON.parse(raw) }
-    return { ...defaultIdentity }
-  } catch {
-    return { ...defaultIdentity }
-  }
+    if (raw) {
+      cachedIdentity = { ...defaultIdentity, ...JSON.parse(raw) }
+      return cachedIdentity
+    }
+  } catch {}
+  cachedIdentity = { ...defaultIdentity }
+  return cachedIdentity
+}
+
+export function getIdentity() {
+  return loadCached()
 }
 
 export function saveIdentity(data) {
-  const current = getIdentity()
+  const current = loadCached()
   const merged = { ...current, ...data }
+  cachedIdentity = merged
   localStorage.setItem(STORAGE_KEY, JSON.stringify(merged))
+  upsertCompanyIdentity({ id: 'default', ...merged }).catch(() => {})
   return merged
 }
 
 export function resetIdentity() {
+  cachedIdentity = { ...defaultIdentity }
   localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultIdentity))
+  upsertCompanyIdentity({ id: 'default', ...defaultIdentity }).catch(() => {})
   return { ...defaultIdentity }
 }

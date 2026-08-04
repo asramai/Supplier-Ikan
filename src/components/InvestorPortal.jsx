@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { getInvestors, insertInvestorTransaction, getInvestorTransactions } from '../services/supabaseService'
 
 function InvestorPortal() {
   const [activeTab, setActiveTab] = useState('tambah')
@@ -9,20 +10,53 @@ function InvestorPortal() {
   const [proofFile, setProofFile] = useState(null)
   const [proofPreview, setProofPreview] = useState('')
   const [showSuccess, setShowSuccess] = useState(false)
+  const [investorList, setInvestorList] = useState([
+    { id: 'inv-1', name: 'Siti Yusufina', email: 'siti.y@investor.com' },
+    { id: 'inv-2', name: 'Ahmad Fauzi', email: 'ahmad.f@investor.com' },
+    { id: 'inv-3', name: 'Budi Santoso', email: 'budi.s@investor.com' },
+    { id: 'inv-4', name: 'Rahmat Panua', email: 'rahmat.p@investor.com' },
+  ])
+  const [investmentHistory, setInvestmentHistory] = useState([
+    { id: 'inv-tx-1', investor: 'Siti Yusufina', amount: 'Rp 25,000,000', date: '12 Okt 2023', batch: 'Batch SP-2024-08' },
+    { id: 'inv-tx-2', investor: 'Ahmad Fauzi', amount: 'Rp 50,000,000', date: '05 Sep 2023', batch: 'Batch SP-2024-07' },
+    { id: 'inv-tx-3', investor: 'Budi Santoso', amount: 'Rp 15,000,000', date: '20 Agt 2023', batch: 'Batch SP-2024-06' },
+    { id: 'inv-tx-4', investor: 'Rahmat Panua', amount: 'Rp 35,500,000', date: '14 Jul 2023', batch: 'Batch SP-2024-05' },
+  ])
 
-  const investorList = [
-    { name: 'Siti Yusufina', email: 'siti.y@investor.com' },
-    { name: 'Ahmad Fauzi', email: 'ahmad.f@investor.com' },
-    { name: 'Budi Santoso', email: 'budi.s@investor.com' },
-    { name: 'Rahmat Panua', email: 'rahmat.p@investor.com' },
-  ]
+  useEffect(() => {
+    const loadInvestors = async () => {
+      try {
+        const data = await getInvestors()
+        if (data && data.length > 0) {
+          setInvestorList(data.map((inv) => ({
+            id: inv.id,
+            name: inv.name,
+            email: inv.email || '',
+          })))
+        }
+      } catch {}
+    }
+    loadInvestors()
+  }, [])
 
-  const investmentHistory = [
-    { investor: 'Siti Yusufina', amount: 'Rp 25,000,000', date: '12 Okt 2023', batch: 'Batch SP-2024-08' },
-    { investor: 'Ahmad Fauzi', amount: 'Rp 50,000,000', date: '05 Sep 2023', batch: 'Batch SP-2024-07' },
-    { investor: 'Budi Santoso', amount: 'Rp 15,000,000', date: '20 Agt 2023', batch: 'Batch SP-2024-06' },
-    { investor: 'Rahmat Panua', amount: 'Rp 35,500,000', date: '14 Jul 2023', batch: 'Batch SP-2024-05' },
-  ]
+  useEffect(() => {
+    const loadHistory = async () => {
+      try {
+        const data = await getInvestorTransactions()
+        if (data && data.length > 0) {
+          const mapped = data.map((tx) => ({
+            id: tx.id,
+            investor: investorList.find((inv) => inv.id === tx.investor_id)?.name || 'Unknown',
+            amount: `Rp ${(tx.amount || 0).toLocaleString('id-ID')}`,
+            date: tx.transfer_date ? new Date(tx.transfer_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-',
+            batch: tx.batch || '-',
+          }))
+          setInvestmentHistory(mapped)
+        }
+      } catch {}
+    }
+    loadHistory()
+  }, [investorList])
 
   const totalDana = investmentHistory.reduce((sum, row) => {
     const num = parseInt(row.amount.replace(/[^\d]/g, ''), 10)
@@ -44,9 +78,27 @@ function InvestorPortal() {
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!investor || !amount || !transferDate) return
+    const selectedInv = investorList.find((inv) => inv.name === investor)
+    try {
+      await insertInvestorTransaction({
+        investor_id: selectedInv?.id || investor,
+        amount: parseFloat(amount) || 0,
+        transfer_date: transferDate,
+        batch: `Batch SP-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 100)).padStart(2, '0')}`,
+        proof: proofPreview || '',
+      })
+      const newEntry = {
+        id: `inv-tx-${Date.now()}`,
+        investor: investor,
+        amount: `Rp ${(parseFloat(amount) || 0).toLocaleString('id-ID')}`,
+        date: new Date(transferDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
+        batch: `Batch SP-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 100)).padStart(2, '0')}`,
+      }
+      setInvestmentHistory((prev) => [newEntry, ...prev])
+    } catch {}
     setShowSuccess(true)
     setInvestor('')
     setAmount('')
@@ -114,7 +166,7 @@ function InvestorPortal() {
                   >
                     <option value="">Pilih Investor...</option>
                     {investorList.map((inv) => (
-                      <option key={inv.name} value={inv.name}>{inv.name}</option>
+                      <option key={inv.id} value={inv.name}>{inv.name}</option>
                     ))}
                   </select>
                   <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
@@ -224,7 +276,7 @@ function InvestorPortal() {
                     </tr>
                   ) : (
                     filteredHistory.map((row, index) => (
-                      <tr key={row.date + index} className="bg-white active:bg-surface-container-high transition-colors">
+                      <tr key={row.id || row.date + index} className="bg-white active:bg-surface-container-high transition-colors">
                         <td className="px-md py-md font-body-md text-body-md text-on-surface">{row.date}</td>
                         <td className="px-md py-md font-body-md text-body-md text-on-surface">{row.investor}</td>
                         <td className="px-md py-md font-body-md text-body-md text-on-surface text-right font-bold">{row.amount}</td>
