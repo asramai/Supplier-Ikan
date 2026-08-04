@@ -1,107 +1,74 @@
-import React, { useState, useEffect } from 'react'
-import { getTransactions } from '../services/supabaseService'
+import React, { useEffect, useState } from 'react'
+import { supabase } from '../utils/supabase'
 
-function PurchasesTable() {
+export default function PurchasesTable() {
   const [purchases, setPurchases] = useState([])
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filterFish, setFilterFish] = useState('Semua')
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const data = await getTransactions('beli')
-        const mapped = data.map((t) => ({
-          fisherman: t.partner_name,
-          time: new Date(t.date || t.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }),
-          fish: t.notes || '-',
-          weight: '-',
-          total: `Rp ${(parseFloat(t.total_amount) || 0).toLocaleString('id-ID')}`,
-          id: t.id,
-        }))
-        setPurchases(mapped.reverse())
-      } catch {}
-      setLoading(false)
+  const fetchPurchases = async () => {
+    setLoading(true)
+    const { data, error } = await supabase
+      .from('purchases')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.error('Error fetching purchases:', error.message)
+    } else {
+      setPurchases(data || [])
     }
-    load()
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    fetchPurchases()
   }, [])
 
-  const fishTypes = ['Semua', ...new Set(purchases.map((p) => p.fish))]
+  if (loading) {
+    return <p className="text-center py-6 text-slate-500">Memuat data dari Supabase...</p>
+  }
 
-  const filtered = purchases.filter((row) => {
-    const matchesSearch = row.fisherman.toLowerCase().includes(searchTerm.toLowerCase()) || row.fish.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesFish = filterFish === 'Semua' || row.fish === filterFish
-    return matchesSearch && matchesFish
-  })
+  if (purchases.length === 0) {
+    return (
+      <div className="text-center py-12 text-slate-400 bg-white rounded-2xl border border-slate-200">
+        <p className="text-base font-medium text-slate-600">Belum ada riwayat transaksi</p>
+        <p className="text-sm mt-1">Silakan input transaksi pertama Anda di tab 'Tambah Transaksi Pembelian'.</p>
+      </div>
+    )
+  }
 
   return (
-    <section className="flex flex-col gap-md animate-slide-up delay-300" style={{ animationFillMode: 'backwards' }}>
-      <div className="flex items-center justify-between">
-        <h2 className="font-headline-md text-headline-md text-on-surface">Pembelian Terakhir</h2>
-        <button className="text-primary font-label-md text-label-md hover:underline">Lihat Semua</button>
-      </div>
-      <div className="flex flex-col sm:flex-row gap-md">
-        <div className="relative flex-1">
-          <span className="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-          <input
-            className="w-full pl-10 pr-md py-md bg-surface-container-lowest border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary outline-none font-body-md transition-all"
-            placeholder="Cari nelayan atau jenis ikan..."
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        <select
-          className="bg-surface-container-lowest border border-outline-variant rounded-lg px-md py-md font-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none"
-          value={filterFish}
-          onChange={(e) => setFilterFish(e.target.value)}
-        >
-          {fishTypes.map((type) => (
-            <option key={type} value={type}>{type}</option>
+    <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
+      <table className="w-full text-left text-sm text-slate-600">
+        <thead className="bg-slate-50 text-slate-700 border-b">
+          <tr>
+            <th className="p-3">ID</th>
+            <th className="p-3">Nelayan</th>
+            <th className="p-3">Ikan</th>
+            <th className="p-3">Berat</th>
+            <th className="p-3">Total</th>
+            <th className="p-3">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {purchases.map((item) => (
+            <tr key={item.id} className="border-b hover:bg-slate-50">
+              <td className="p-3 text-xs text-slate-400">#{item.id}</td>
+              <td className="p-3 font-medium text-slate-800">{item.supplier_name}</td>
+              <td className="p-3">{item.fish_name}</td>
+              <td className="p-3">{item.weight_kg} kg</td>
+              <td className="p-3 font-semibold text-emerald-600">
+                Rp {Number(item.total_price).toLocaleString('id-ID')}
+              </td>
+              <td className="p-3">
+                <span className="bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-md text-xs font-medium">
+                  {item.status || 'Lunas'}
+                </span>
+              </td>
+            </tr>
           ))}
-        </select>
-      </div>
-      <div className="bg-white border border-outline-variant rounded-xl overflow-hidden">
-        <div className="overflow-x-auto scroll-hide">
-          <table className="w-full text-left border-collapse">
-            <thead className="bg-primary border-b-2 border-primary-container">
-              <tr>
-                <th className="px-md py-3 font-financial-table text-white whitespace-nowrap">Nelayan</th>
-                <th className="px-md py-3 font-financial-table text-white whitespace-nowrap">Jenis Ikan</th>
-                <th className="px-md py-3 font-financial-table text-white whitespace-nowrap">Berat</th>
-                <th className="px-md py-3 font-financial-table text-white whitespace-nowrap">Total</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-outline-variant/30">
-              {loading ? (
-                <tr>
-                  <td colSpan={4} className="px-md py-8 text-center font-body-md text-body-md text-on-surface-variant">Memuat data...</td>
-                </tr>
-              ) : filtered.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="px-md py-8 text-center font-body-md text-body-md text-on-surface-variant">Tidak ada data ditemukan</td>
-                </tr>
-              ) : (
-                filtered.map((row, index) => (
-                  <tr key={row.id || index} className={index % 2 === 0 ? 'zebra-row' : ''}>
-                    <td className="px-md py-4">
-                      <div className="flex flex-col">
-                        <span className="font-body-md text-body-md font-bold text-on-surface">{row.fisherman}</span>
-                        <span className="font-label-md text-label-md text-on-surface-variant">{row.time}</span>
-                      </div>
-                    </td>
-                    <td className="px-md py-4 font-body-md text-body-md">{row.fish}</td>
-                    <td className="px-md py-4 font-body-md text-body-md">{row.weight}</td>
-                    <td className="px-md py-4 font-body-md text-body-md font-bold text-primary">{row.total}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
+        </tbody>
+      </table>
+    </div>
   )
 }
-
-export default PurchasesTable
